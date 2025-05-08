@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Brand Voice Codifier - Interview Results{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h1 class="h3 mb-0">Brand Interview Complete</h1>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Success!</strong> Your brand interview has been completed and your brand voice parameters have been updated.
+                </div>
+                
+                <p class="lead">
+                    Here's a summary of your brand voice based on your interview responses:
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h4 mb-0">Brand Personality</h2>
+            </div>
+            <div class="card-body">
+                <h3 class="h5">Primary Traits</h3>
+                <ul class="mb-4">
+                    {% for trait in brand_parameters.personality.primary_traits %}
+                        <li>{{ trait|capitalize }}</li>
+                    {% else %}
+                        <li class="text-muted">No primary traits selected</li>
+                    {% endfor %}
+                </ul>
+                
+                <h3 class="h5">Secondary Traits</h3>
+                <ul class="mb-4">
+                    {% for trait in brand_parameters.personality.secondary_traits %}
+                        <li>{{ trait|capitalize }}</li>
+                    {% else %}
+                        <li class="text-muted">No secondary traits selected</li>
+                    {% endfor %}
+                </ul>
+                
+                <h3 class="h5">Traits to Avoid</h3>
+                <ul>
+                    {% for trait in brand_parameters.personality.traits_to_avoid %}
+                        <li>{{ trait|capitalize }}</li>
+                    {% else %}
+                        <li class="text-muted">No traits to avoid specified</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h4 mb-0">Emotional Tone</h2>
+            </div>
+            <div class="card-body">
+                <h3 class="h5">Primary Emotions</h3>
+                <ul class="mb-4">
+                    {% for emotion in brand_parameters.emotional_tone.primary_emotions %}
+                        <li>{{ emotion|capitalize }}</li>
+                    {% else %}
+                        <li class="text-muted">No primary emotions selected</li>
+                    {% endfor %}
+                </ul>
+                
+                <h3 class="h5">Secondary Emotions</h3>
+                <ul class="mb-4">
+                    {% for emotion in brand_parameters.emotional_tone.secondary_emotions %}
+                        <li>{{ emotion|capitalize }}</li>
+                    {% else %}
+                        <li class="text-muted">No secondary emotions selected</li>
+                    {% endfor %}
+                </ul>
+                
+                <h3 class="h5">Emotional Intensity</h3>
+                <div class="progress mb-2" style="height: 20px;">
+                    <div class="progress-bar" role="progressbar" 
+                         style="width: {{ brand_parameters.emotional_tone.intensity * 10 }}%;" 
+                         aria-valuenow="{{ brand_parameters.emotional_tone.intensity * 10 }}" 
+                         aria-valuemin="0" aria-valuemax="100">
+                        {{ brand_parameters.emotional_tone.intensity }}/10
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <small class="text-muted">Subtle</small>
+                    <small class="text-muted">Moderate</small>
+                    <small class="text-muted">Intense</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h4 mb-0">Formality Level</h2>
+            </div>
+            <div class="card-body">
+                <h3 class="h5">Formality Score: {{ brand_parameters.formality.level }}/10</h3>
+                <div class="progress mb-2" style="height: 30px;">
+                    <div class="progress-bar" role="progressbar" 
+                         style="width: {{ brand_parameters.formality.level * 10 }}%;" 
+                         aria-valuenow="{{ brand_parameters.formality.level * 10 }}" 
+                         aria-valuemin="0" aria-valuemax="100">
+                        {{ brand_parameters.formality.level }}/10
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between mb-4">
+                    <small class="text-muted">Very Casual</small>
+                    <small class="text-muted">Balanced</small>
+                    <small class="text-muted">Very Formal</small>
+                </div>
+                
+                {% if brand_parameters.formality.context_variations %}
+                    <h3 class="h5">Context Variations</h3>
+                    <p>{{ brand_parameters.formality.context_variations.get('general', '') }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h4 mb-0">Communication Style</h2>
+            </div>
+            <div class="card-body">
+                <h3 class="h5">Storytelling vs. Direct</h3>
+                <div class="progress mb-2" style="height: 20px;">
+                    <div class="progress-bar bg-info" role="progressbar" 
+                         style="width: {{ brand_parameters.communication_style.storytelling_preference * 10 }}%;" 
+                         aria-valuenow="{{ brand_parameters.communication_style.storytelling_preference * 10 }}" 
+                         aria-valuemin="0" aria-valuemax="100">
+                        {{ brand_parameters.communication_style.storytelling_preference }}/10
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between mb-4">
+                    <small class="text-muted">Very Direct</small>
+                    <small class="text-muted">Balanced</small>
+                    <small class="text-muted">Narrative-focused</small>
+                </div>
+                
+                <h3 class="h5">Rhetorical Devices</h3>
+                <ul>
+                    {% for device in brand_parameters.communication_style.rhetorical_devices %}
+                        <li>{{ device }}</li>
+                    {% else %}
+                        <li class="text-muted">No rhetorical devices selected</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h2 class="h4 mb-0">Next Steps</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ url_for('dashboard.index') }}" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-chart-bar me-2"></i> View Brand Voice Dashboard
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ url_for('home.index') }}" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-home me-2"></i> Try Another Input Method
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

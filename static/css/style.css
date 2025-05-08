@@ -1,0 +1,301 @@
+/* Main Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
+
+/* Navbar Styles */
+.navbar-brand {
+    font-weight: 700;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #fff;
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    font-weight: 600;
+    border-top-left-radius: 8px !important;
+    border-top-right-radius: 8px !important;
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 4px;
+    font-weight: 500;
+    padding: 8px 16px;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* Form Styles */
+.form-control, .form-select {
+    border-radius: 4px;
+    padding: 10px 12px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 4px;
+}
+
+/* Progress Bar Styles */
+.progress {
+    border-radius: 4px;
+    background-color: #e9ecef;
+}
+
+/* Tab Styles */
+.nav-tabs .nav-link {
+    border-radius: 4px 4px 0 0;
+    font-weight: 500;
+    color: #495057;
+}
+
+.nav-tabs .nav-link.active {
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+/* Chart Styles */
+.chart-container {
+    position: relative;
+    margin: auto;
+    height: 300px;
+    width: 100%;
+}
+
+/* Footer Styles */
+.footer {
+    margin-top: auto;
+    padding: 20px 0;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+/* Utility Classes */
+.text-primary {
+    color: #0d6efd !important;
+}
+
+.text-success {
+    color: #198754 !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.text-info {
+    color: #0dcaf0 !important;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .card-title {
+        font-size: 1.1rem;
+    }
+    
+    .btn {
+        padding: 6px 12px;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+}
+
+/* Loading Spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.2em;
+}
+
+/* Badge Styles */
+.badge {
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 4px;
+}
+
+/* Blockquote Styles */
+blockquote {
+    border-left: 4px solid #0d6efd;
+    padding-left: 15px;
+    font-style: italic;
+}
+
+/* List Group Styles */
+.list-group-item {
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+/* Jumbotron Styles */
+.jumbotron {
+    background-color: #f8f9fa;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+}
+
+/* Custom Gauge Chart Styles */
+.gauge-chart {
+    position: relative;
+    text-align: center;
+}
+
+.gauge-chart canvas {
+    max-width: 100%;
+}
+
+.gauge-value {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* File Upload Preview */
+#file-preview {
+    margin-top: 10px;
+}
+
+/* Tab Content Animation */
+.tab-pane.fade {
+    transition: opacity 0.15s linear;
+}
+
+/* Custom Range Input Styling */
+input[type=range] {
+    height: 25px;
+    -webkit-appearance: none;
+    margin: 10px 0;
+    width: 100%;
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    animate: 0.2s;
+    box-shadow: 0px 0px 0px #000000;
+    background: #0d6efd;
+    border-radius: 1px;
+    border: 0px solid #000000;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    box-shadow: 0px 0px 0px #000000;
+    border: 1px solid #0d6efd;
+    height: 18px;
+    width: 18px;
+    border-radius: 25px;
+    background: #ffffff;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -7px;
+}
+
+/* Multiselect Styling */
+select[multiple] {
+    height: auto;
+    min-height: 100px;
+}
+
+/* Placeholder for Chart.js gauge chart */
+.chart-gauge {
+    position: relative;
+    margin: 0 auto;
+}
+
+.chart-gauge .chart-gauge-value {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Placeholder for empty states */
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+/* Placeholder for loading states */
+.loading-state {
+    text-align: center;
+    padding: 30px;
+}
+
+.loading-state .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 15px;
+}

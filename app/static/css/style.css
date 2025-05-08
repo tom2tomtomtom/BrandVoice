@@ -1,0 +1,160 @@
+/* Main Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Header Styles */
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    font-weight: 600;
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+}
+
+/* Feature Cards */
+.feature-card {
+    height: 100%;
+    text-align: center;
+    padding: 20px;
+}
+
+.feature-card i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: #0d6efd;
+}
+
+/* Progress Indicators */
+.progress-indicator {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.progress-indicator i {
+    font-size: 1.5rem;
+    margin-right: 10px;
+}
+
+.progress-complete {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.progress-incomplete {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+/* Form Styles */
+.form-label {
+    font-weight: 600;
+}
+
+.form-control, .form-select {
+    border-radius: 5px;
+    padding: 10px 15px;
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* Dashboard Styles */
+.parameter-card {
+    margin-bottom: 20px;
+}
+
+.parameter-card .card-header {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.parameter-slider {
+    margin: 20px 0;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin-bottom: 30px;
+}
+
+/* Example Copy Box */
+.example-copy {
+    background-color: #e9ecef;
+    border-left: 5px solid #0d6efd;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 5px;
+}
+
+/* Tabs */
+.nav-tabs .nav-link {
+    color: #495057;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .feature-card i {
+        font-size: 2.5rem;
+    }
+}
+
+/* Animation for loading states */
+.loading-spinner {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border: 0.25rem solid rgba(0, 0, 0, 0.1);
+    border-right-color: #0d6efd;
+    border-radius: 50%;
+    animation: spinner 0.75s linear infinite;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}

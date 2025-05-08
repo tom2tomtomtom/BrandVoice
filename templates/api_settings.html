@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block title %}Brand Voice Codifier - API Settings{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h4 mb-0"><i class="fas fa-cogs me-2"></i> API Integration Settings</h2>
+            </div>
+            <div class="card-body">
+                <p class="lead">Configure API integration to automatically send your brand voice parameters to external copywriting systems.</p>
+                
+                <form action="{{ url_for('api_settings') }}" method="post" class="mt-4">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <div class="mb-4">
+                        <label for="api_provider" class="form-label">API Provider</label>
+                        <select class="form-select" id="api_provider" name="api_provider">
+                            <option value="" {% if not api_settings.api_provider %}selected{% endif %}>Select a provider</option>
+                            <option value="openai" {% if api_settings.api_provider == 'openai' %}selected{% endif %}>OpenAI</option>
+                            <option value="anthropic" {% if api_settings.api_provider == 'anthropic' %}selected{% endif %}>Anthropic</option>
+                            <option value="cohere" {% if api_settings.api_provider == 'cohere' %}selected{% endif %}>Cohere</option>
+                            <option value="custom" {% if api_settings.api_provider == 'custom' %}selected{% endif %}>Custom Provider</option>
+                        </select>
+                        <div class="form-text">Select the AI provider you want to integrate with.</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="api_key" class="form-label">API Key</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            <input type="password" class="form-control" id="api_key" name="api_key" value="{{ api_settings.api_key }}" placeholder="Enter your API key">
+                            <button class="btn btn-outline-secondary" type="button" id="toggle-api-key">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">Your API key will be stored securely in your session.</div>
+                    </div>
+                    
+                    <div class="mb-4 form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="integration_enabled" name="integration_enabled" {% if api_settings.integration_enabled %}checked{% endif %}>
+                        <label class="form-check-label" for="integration_enabled">Enable API Integration</label>
+                        <div class="form-text">When enabled, your brand voice parameters will be automatically sent to the API provider.</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i> Save API Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h3 class="h5 mb-0">API Integration Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-info-circle text-primary me-2"></i> What This Does</h5>
+                        <p>API integration allows you to automatically send your brand voice parameters to external AI copywriting systems. This enables these systems to generate content that matches your brand's unique voice.</p>
+                        <p>When enabled, your brand voice parameters will be sent to the selected API provider whenever you update them through any of the input methods.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-shield-alt text-primary me-2"></i> Security Information</h5>
+                        <ul>
+                            <li>Your API key is stored only in your session and is not saved to any database.</li>
+                            <li>The connection to the API provider is made using secure HTTPS.</li>
+                            <li>We recommend using API keys with limited permissions when possible.</li>
+                            <li>You can disable the integration at any time.</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-plug text-primary me-2"></i> Supported Providers</h5>
+                        <div class="card-group">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">OpenAI</h5>
+                                    <p class="card-text">Integrate with OpenAI's GPT models to generate content based on your brand voice.</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Anthropic</h5>
+                                    <p class="card-text">Use Anthropic's Claude models for brand-aligned content generation.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-group mt-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Cohere</h5>
+                                    <p class="card-text">Connect with Cohere's language models for consistent brand messaging.</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Custom</h5>
+                                    <p class="card-text">Configure a custom API endpoint for your own copywriting system.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-sync text-primary me-2"></i> Synchronization Status</h5>
+                        {% if api_settings.last_sync_time %}
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i> Last synchronized: {{ api_settings.last_sync_time }}
+                            </div>
+                            <p>Your brand voice parameters have been successfully synchronized with the API provider.</p>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i> Not yet synchronized
+                            </div>
+                            <p>Your brand voice parameters have not been synchronized with any API provider yet.</p>
+                            <p>Save your API settings and complete at least one input method to enable synchronization.</p>
+                        {% endif %}
+                        
+                        <div class="d-grid gap-2 mt-3">
+                            <button id="sync-now-btn" class="btn btn-outline-primary" {% if not api_settings.integration_enabled or not api_settings.api_key %}disabled{% endif %}>
+                                <i class="fas fa-sync me-2"></i> Synchronize Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle API key visibility
+        const apiKeyInput = document.getElementById('api_key');
+        const toggleApiKeyBtn = document.getElementById('toggle-api-key');
+        
+        toggleApiKeyBtn.addEventListener('click', function() {
+            const type = apiKeyInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            apiKeyInput.setAttribute('type', type);
+            
+            const icon = toggleApiKeyBtn.querySelector('i');
+            if (type === 'text') {
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                icon.className = 'fas fa-eye';
+            }
+        });
+        
+        // Sync now button
+        const syncNowBtn = document.getElementById('sync-now-btn');
+        if (syncNowBtn) {
+            syncNowBtn.addEventListener('click', function() {
+                this.disabled = true;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Synchronizing...';
+                
+                fetch('/api/sync', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert('Synchronization failed: ' + data.error);
+                        this.disabled = false;
+                        this.innerHTML = '<i class="fas fa-sync me-2"></i> Synchronize Now';
+                    }
+                })
+                .catch(error => {
+                    alert('Error: ' + error);
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-sync me-2"></i> Synchronize Now';
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

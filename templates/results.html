@@ -1,0 +1,555 @@
+{% extends 'base.html' %}
+
+{% block title %}Brand Voice Codifier - Results{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h4 mb-0"><i class="fas fa-chart-bar me-2"></i> Brand Voice Parameters</h2>
+            </div>
+            <div class="card-body">
+                <p class="lead">Here are the brand voice parameters we've identified based on your input.</p>
+
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5><i class="fas fa-check-circle me-2 text-success"></i> Input Methods Used</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item {% if input_methods.document_upload.used %}list-group-item-success{% else %}list-group-item-light{% endif %}">
+                                        <i class="fas {% if input_methods.document_upload.used %}fa-check-circle text-success{% else %}fa-times-circle text-muted{% endif %} me-2"></i>
+                                        Document Upload
+                                    </li>
+                                    <li class="list-group-item {% if input_methods.brand_interview.used %}list-group-item-success{% else %}list-group-item-light{% endif %}">
+                                        <i class="fas {% if input_methods.brand_interview.used %}fa-check-circle text-success{% else %}fa-times-circle text-muted{% endif %} me-2"></i>
+                                        Brand Interview
+                                    </li>
+                                    <li class="list-group-item {% if input_methods.web_scraper.used %}list-group-item-success{% else %}list-group-item-light{% endif %}">
+                                        <i class="fas {% if input_methods.web_scraper.used %}fa-check-circle text-success{% else %}fa-times-circle text-muted{% endif %} me-2"></i>
+                                        Web Scraper
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5><i class="fas fa-file-export me-2 text-primary"></i> Export & Integration Options</h5>
+                                <p>Export your brand voice parameters for integration with copywriting systems.</p>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="{{ url_for('export') }}" class="btn btn-primary">
+                                        <i class="fas fa-file-alt me-2"></i> View Full Report
+                                    </a>
+                                    <a href="{{ url_for('export', format='json') }}" class="btn btn-outline-primary">
+                                        <i class="fas fa-download me-2"></i> Download JSON
+                                    </a>
+                                    <a href="{{ url_for('api_settings') }}" class="btn btn-outline-primary">
+                                        <i class="fas fa-cogs me-2"></i> API Integration Settings
+                                    </a>
+                                    {% if api_settings.integration_enabled and api_settings.api_key %}
+                                        <button id="sync-api-btn" class="btn btn-success">
+                                            <i class="fas fa-sync me-2"></i> Sync with {{ api_settings.api_provider|capitalize }}
+                                        </button>
+                                    {% endif %}
+                                </div>
+
+                                {% if api_settings.integration_enabled and api_settings.api_key %}
+                                    <div class="alert alert-success mt-3 mb-0">
+                                        <i class="fas fa-check-circle me-2"></i> API Integration is enabled with {{ api_settings.api_provider|capitalize }}
+                                        {% if api_settings.last_sync_time %}
+                                            <br><small>Last synchronized: {{ api_settings.last_sync_time }}</small>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-info mt-3 mb-0">
+                                        <i class="fas fa-info-circle me-2"></i> Set up API integration to automatically send your brand voice parameters to external copywriting systems.
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <ul class="nav nav-tabs mb-4" id="parameterTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="personality-tab" data-bs-toggle="tab" data-bs-target="#personality" type="button" role="tab" aria-controls="personality" aria-selected="true">
+                            <i class="fas fa-user-circle me-1"></i> Personality
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="emotional-tab" data-bs-toggle="tab" data-bs-target="#emotional" type="button" role="tab" aria-controls="emotional" aria-selected="false">
+                            <i class="fas fa-heart me-1"></i> Emotional Tone
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="formality-tab" data-bs-toggle="tab" data-bs-target="#formality" type="button" role="tab" aria-controls="formality" aria-selected="false">
+                            <i class="fas fa-balance-scale me-1"></i> Formality
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="vocabulary-tab" data-bs-toggle="tab" data-bs-target="#vocabulary" type="button" role="tab" aria-controls="vocabulary" aria-selected="false">
+                            <i class="fas fa-book me-1"></i> Vocabulary
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="communication-tab" data-bs-toggle="tab" data-bs-target="#communication" type="button" role="tab" aria-controls="communication" aria-selected="false">
+                            <i class="fas fa-comment me-1"></i> Communication
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="parameterTabsContent">
+                    <!-- Personality Tab -->
+                    <div class="tab-pane fade show active" id="personality" role="tabpanel" aria-labelledby="personality-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Brand Personality Profile</h4>
+                                <div class="chart-container" style="position: relative; height:300px;">
+                                    <canvas id="personalityChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Personality Traits</h4>
+                                <div class="mb-3">
+                                    <h5>Primary Traits</h5>
+                                    <ul>
+                                        {% for trait in brand_parameters.personality.primary_traits %}
+                                            <li>{{ trait|capitalize }}</li>
+                                        {% else %}
+                                            <li class="text-muted">No primary traits identified</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="mb-3">
+                                    <h5>Secondary Traits</h5>
+                                    <ul>
+                                        {% for trait in brand_parameters.personality.secondary_traits %}
+                                            <li>{{ trait|capitalize }}</li>
+                                        {% else %}
+                                            <li class="text-muted">No secondary traits identified</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5>Traits to Avoid</h5>
+                                    <ul>
+                                        {% for trait in brand_parameters.personality.traits_to_avoid %}
+                                            <li>{{ trait|capitalize }}</li>
+                                        {% else %}
+                                            <li class="text-muted">No traits to avoid identified</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emotional Tone Tab -->
+                    <div class="tab-pane fade" id="emotional" role="tabpanel" aria-labelledby="emotional-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Emotional Tone Profile</h4>
+                                <div class="chart-container" style="position: relative; height:300px;">
+                                    <canvas id="emotionalChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Emotional Characteristics</h4>
+                                <div class="mb-3">
+                                    <h5>Primary Emotions</h5>
+                                    <ul>
+                                        {% for emotion in brand_parameters.emotional_tone.primary_emotions %}
+                                            <li>{{ emotion|capitalize }}</li>
+                                        {% else %}
+                                            <li class="text-muted">No primary emotions identified</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="mb-3">
+                                    <h5>Secondary Emotions</h5>
+                                    <ul>
+                                        {% for emotion in brand_parameters.emotional_tone.secondary_emotions %}
+                                            <li>{{ emotion|capitalize }}</li>
+                                        {% else %}
+                                            <li class="text-muted">No secondary emotions identified</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="mb-3">
+                                    <h5>Emotional Intensity</h5>
+                                    <div class="progress mb-2" style="height: 25px;">
+                                        <div class="progress-bar" role="progressbar" style="width: {{ brand_parameters.emotional_tone.intensity * 10 }}%;"
+                                             aria-valuenow="{{ brand_parameters.emotional_tone.intensity }}" aria-valuemin="0" aria-valuemax="10">
+                                            {{ brand_parameters.emotional_tone.intensity }}/10
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">Subtle</small>
+                                        <small class="text-muted">Moderate</small>
+                                        <small class="text-muted">Intense</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formality Tab -->
+                    <div class="tab-pane fade" id="formality" role="tabpanel" aria-labelledby="formality-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Formality Level</h4>
+                                <div class="chart-container" style="position: relative; height:300px;">
+                                    <canvas id="formalityChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Formality Characteristics</h4>
+                                <div class="mb-3">
+                                    <h5>Formality Score: {{ brand_parameters.formality.level }}/10</h5>
+                                    <div class="progress mb-2" style="height: 25px;">
+                                        <div class="progress-bar" role="progressbar" style="width: {{ brand_parameters.formality.level * 10 }}%;"
+                                             aria-valuenow="{{ brand_parameters.formality.level }}" aria-valuemin="0" aria-valuemax="10">
+                                            {{ brand_parameters.formality.level }}/10
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">Very Casual</small>
+                                        <small class="text-muted">Balanced</small>
+                                        <small class="text-muted">Very Formal</small>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <h5>Context Variations</h5>
+                                    {% if brand_parameters.formality.context_variations %}
+                                        <p>{{ brand_parameters.formality.context_variations.get('general', 'No context variations specified.') }}</p>
+                                    {% else %}
+                                        <p class="text-muted">No context variations identified.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vocabulary Tab -->
+                    <div class="tab-pane fade" id="vocabulary" role="tabpanel" aria-labelledby="vocabulary-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Preferred Terms</h4>
+                                <div class="card">
+                                    <div class="card-body">
+                                        {% if brand_parameters.vocabulary.preferred_terms %}
+                                            <div class="d-flex flex-wrap">
+                                                {% for term in brand_parameters.vocabulary.preferred_terms %}
+                                                    <span class="badge bg-primary m-1">{{ term }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            <p class="text-muted">No preferred terms identified.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Vocabulary Characteristics</h4>
+                                <div class="mb-3">
+                                    <h5>Jargon Level</h5>
+                                    <div class="progress mb-2" style="height: 25px;">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ brand_parameters.vocabulary.jargon_level * 10 }}%;"
+                                             aria-valuenow="{{ brand_parameters.vocabulary.jargon_level }}" aria-valuemin="0" aria-valuemax="10">
+                                            {{ brand_parameters.vocabulary.jargon_level }}/10
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">Minimal</small>
+                                        <small class="text-muted">Moderate</small>
+                                        <small class="text-muted">Extensive</small>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <h5>Technical Complexity</h5>
+                                    <div class="progress mb-2" style="height: 25px;">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ brand_parameters.vocabulary.technical_complexity * 10 }}%;"
+                                             aria-valuenow="{{ brand_parameters.vocabulary.technical_complexity }}" aria-valuemin="0" aria-valuemax="10">
+                                            {{ brand_parameters.vocabulary.technical_complexity }}/10
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">Simple</small>
+                                        <small class="text-muted">Moderate</small>
+                                        <small class="text-muted">Complex</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Communication Style Tab -->
+                    <div class="tab-pane fade" id="communication" role="tabpanel" aria-labelledby="communication-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Communication Style Profile</h4>
+                                <div class="chart-container" style="position: relative; height:300px;">
+                                    <canvas id="communicationChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Communication Characteristics</h4>
+                                <div class="mb-3">
+                                    <h5>Storytelling vs. Direct</h5>
+                                    <div class="progress mb-2" style="height: 25px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ brand_parameters.communication_style.storytelling_preference * 10 }}%;"
+                                             aria-valuenow="{{ brand_parameters.communication_style.storytelling_preference }}" aria-valuemin="0" aria-valuemax="10">
+                                            {{ brand_parameters.communication_style.storytelling_preference }}/10
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">Very Direct</small>
+                                        <small class="text-muted">Balanced</small>
+                                        <small class="text-muted">Narrative-focused</small>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <h5>Sentence Structure</h5>
+                                    <p><strong>Length Preference:</strong> {{ brand_parameters.communication_style.sentence_structure.length_preference }}/10</p>
+                                    <p><strong>Complexity Preference:</strong> {{ brand_parameters.communication_style.sentence_structure.complexity_preference }}/10</p>
+                                </div>
+                                <div class="mb-3">
+                                    <h5>Rhetorical Devices</h5>
+                                    {% if brand_parameters.communication_style.rhetorical_devices %}
+                                        <ul>
+                                            {% for device in brand_parameters.communication_style.rhetorical_devices %}
+                                                <li>{{ device }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p class="text-muted">No rhetorical devices identified.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h4 mb-0"><i class="fas fa-pen me-2"></i> Example Copy</h2>
+            </div>
+            <div class="card-body">
+                <p class="lead">Based on your brand voice parameters, here's an example of copy that reflects your brand voice:</p>
+
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        <blockquote class="blockquote">
+                            <p>{{ example_copy | nl2br | safe }}</p>
+                        </blockquote>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Note:</strong> This is a simplified example. For more nuanced and customized copy, you can use the exported parameters with a dedicated copywriting system.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // API Sync Button
+        const syncApiBtn = document.getElementById('sync-api-btn');
+        if (syncApiBtn) {
+            syncApiBtn.addEventListener('click', function() {
+                this.disabled = true;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Synchronizing...';
+
+                fetch('/api/sync', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert('Synchronization failed: ' + data.error);
+                        this.disabled = false;
+                        this.innerHTML = '<i class="fas fa-sync me-2"></i> Sync with {{ api_settings.api_provider|capitalize }}';
+                    }
+                })
+                .catch(error => {
+                    alert('Error: ' + error);
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-sync me-2"></i> Sync with {{ api_settings.api_provider|capitalize }}';
+                });
+            });
+        }
+
+        // Personality Chart
+        const personalityCtx = document.getElementById('personalityChart').getContext('2d');
+        const personalityChart = new Chart(personalityCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Innovative', 'Trustworthy', 'Playful', 'Sophisticated', 'Friendly', 'Authoritative', 'Bold', 'Empathetic'],
+                datasets: [{
+                    label: 'Primary Traits',
+                    data: [
+                        {{ 10 if 'innovative' in brand_parameters.personality.primary_traits else
+                           5 if 'innovative' in brand_parameters.personality.secondary_traits else 0 }},
+                        {{ 10 if 'trustworthy' in brand_parameters.personality.primary_traits else
+                           5 if 'trustworthy' in brand_parameters.personality.secondary_traits else 0 }},
+                        {{ 10 if 'playful' in brand_parameters.personality.primary_traits else
+                           5 if 'playful' in brand_parameters.personality.secondary_traits else 0 }},
+                        {{ 10 if 'sophisticated' in brand_parameters.personality.primary_traits else
+                           5 if 'sophisticated' in brand_parameters.personality.secondary_traits else 0 }},
+                        {{ 10 if 'friendly' in brand_parameters.personality.primary_traits else
+                           5 if 'friendly' in brand_parameters.personality.secondary_traits else 0 }},
+                        {{ 10 if 'authoritative' in brand_parameters.personality.primary_traits else
+                           5 if 'authoritative' in brand_parameters.personality.secondary_traits else 0 }},
+                        {{ 10 if 'bold' in brand_parameters.personality.primary_traits else
+                           5 if 'bold' in brand_parameters.personality.secondary_traits else 0 }},
+                        {{ 10 if 'empathetic' in brand_parameters.personality.primary_traits else
+                           5 if 'empathetic' in brand_parameters.personality.secondary_traits else 0 }}
+                    ],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(54, 162, 235, 1)'
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: {
+                            display: true
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 10
+                    }
+                }
+            }
+        });
+
+        // Emotional Tone Chart
+        const emotionalCtx = document.getElementById('emotionalChart').getContext('2d');
+        const emotionalChart = new Chart(emotionalCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Optimistic', 'Serious', 'Passionate', 'Calm', 'Urgent', 'Reassuring'],
+                datasets: [{
+                    data: [
+                        {{ 10 if 'optimistic' in brand_parameters.emotional_tone.primary_emotions else
+                           5 if 'optimistic' in brand_parameters.emotional_tone.secondary_emotions else 1 }},
+                        {{ 10 if 'serious' in brand_parameters.emotional_tone.primary_emotions else
+                           5 if 'serious' in brand_parameters.emotional_tone.secondary_emotions else 1 }},
+                        {{ 10 if 'passionate' in brand_parameters.emotional_tone.primary_emotions else
+                           5 if 'passionate' in brand_parameters.emotional_tone.secondary_emotions else 1 }},
+                        {{ 10 if 'calm' in brand_parameters.emotional_tone.primary_emotions else
+                           5 if 'calm' in brand_parameters.emotional_tone.secondary_emotions else 1 }},
+                        {{ 10 if 'urgent' in brand_parameters.emotional_tone.primary_emotions else
+                           5 if 'urgent' in brand_parameters.emotional_tone.secondary_emotions else 1 }},
+                        {{ 10 if 'reassuring' in brand_parameters.emotional_tone.primary_emotions else
+                           5 if 'reassuring' in brand_parameters.emotional_tone.secondary_emotions else 1 }}
+                    ],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)'
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        // Formality Chart
+        const formalityCtx = document.getElementById('formalityChart').getContext('2d');
+        const formalityChart = new Chart(formalityCtx, {
+            type: 'gauge',
+            data: {
+                datasets: [{
+                    value: {{ brand_parameters.formality.level }},
+                    minValue: 1,
+                    maxValue: 10,
+                    backgroundColor: ['#D6EAF8', '#AED6F1', '#85C1E9', '#5DADE2', '#3498DB', '#2E86C1', '#2874A6', '#21618C', '#1B4F72', '#154360'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                needle: {
+                    radiusPercentage: 2,
+                    widthPercentage: 3.2,
+                    lengthPercentage: 80,
+                    color: 'rgba(0, 0, 0, 1)'
+                },
+                valueLabel: {
+                    display: true,
+                    formatter: function(value) {
+                        return value + '/10';
+                    },
+                    color: 'rgba(0, 0, 0, 1)',
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
+                    borderRadius: 5,
+                    padding: {
+                        top: 10,
+                        bottom: 10
+                    }
+                }
+            }
+        });
+
+        // Communication Style Chart
+        const communicationCtx = document.getElementById('communicationChart').getContext('2d');
+        const communicationChart = new Chart(communicationCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Storytelling', 'Sentence Length', 'Sentence Complexity'],
+                datasets: [{
+                    label: 'Communication Style',
+                    data: [
+                        {{ brand_parameters.communication_style.storytelling_preference }},
+                        {{ brand_parameters.communication_style.sentence_structure.length_preference }},
+                        {{ brand_parameters.communication_style.sentence_structure.complexity_preference }}
+                    ],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(75, 192, 192, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}Brand Voice Codifier - Document Upload{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h1 class="h3 mb-0">Document Upload & Analysis</h1>
+            </div>
+            <div class="card-body">
+                <h2 class="h4 mb-3">Upload Brand Documents</h2>
+                
+                <p>
+                    Upload your existing brand documents such as:
+                </p>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <ul>
+                            <li>Brand guidelines</li>
+                            <li>Mission statements</li>
+                            <li>Marketing materials</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul>
+                            <li>Website copy</li>
+                            <li>Social media content</li>
+                            <li>Press releases</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <p>
+                    Our system will analyze the text to extract key brand voice elements.
+                </p>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Supported file formats:</strong> PDF, TXT
+                </div>
+                
+                <form action="{{ url_for('document_upload.index') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <div class="mb-4">
+                        <label for="document-upload" class="form-label">Upload Brand Documents</label>
+                        <input type="file" class="form-control" id="document-upload" name="documents" accept=".pdf,.txt" multiple required>
+                        <div class="invalid-feedback">
+                            Please select at least one document to upload.
+                        </div>
+                        <div class="form-text">
+                            You can select multiple files by holding Ctrl (or Cmd on Mac) while selecting.
+                        </div>
+                    </div>
+                    
+                    <div id="file-list" class="mb-4">
+                        <!-- Selected files will be displayed here -->
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-cogs me-2"></i> Analyze Documents
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h2 class="h4 mb-0">How Document Analysis Works</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <h3 class="h5"><i class="fas fa-file-alt me-2 text-primary"></i> Text Extraction</h3>
+                            <p>
+                                We extract text from your uploaded documents, preserving the content while removing formatting.
+                            </p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h3 class="h5"><i class="fas fa-search me-2 text-primary"></i> Content Analysis</h3>
+                            <p>
+                                Our system analyzes the text for key indicators of brand voice, including personality traits, emotional tone, and formality level.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <h3 class="h5"><i class="fas fa-chart-line me-2 text-primary"></i> Pattern Recognition</h3>
+                            <p>
+                                We identify patterns in vocabulary, sentence structure, and communication style to build a comprehensive brand voice profile.
+                            </p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h3 class="h5"><i class="fas fa-sliders-h me-2 text-primary"></i> Parameter Extraction</h3>
+                            <p>
+                                The analysis results are converted into structured parameters that can be reviewed, adjusted, and exported for use in copywriting systems.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('document-upload');
+        const fileList = document.getElementById('file-list');
+        
+        fileInput.addEventListener('change', function() {
+            fileList.innerHTML = '';
+            
+            if (this.files.length > 0) {
+                const fileListHeader = document.createElement('h5');
+                fileListHeader.textContent = 'Selected Files:';
+                fileList.appendChild(fileListHeader);
+            }
+            
+            for (let i = 0; i < this.files.length; i++) {
+                const file = this.files[i];
+                const fileItem = document.createElement('div');
+                fileItem.className = 'alert alert-info mb-2';
+                
+                // Determine file icon based on type
+                let fileIcon = 'fa-file';
+                if (file.type.includes('pdf')) {
+                    fileIcon = 'fa-file-pdf';
+                } else if (file.type.includes('text')) {
+                    fileIcon = 'fa-file-alt';
+                }
+                
+                fileItem.innerHTML = `
+                    <i class="fas ${fileIcon} me-2"></i>
+                    <strong>${file.name}</strong> (${formatFileSize(file.size)})
+                `;
+                
+                fileList.appendChild(fileItem);
+            }
+        });
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    });
+</script>
+{% endblock %}

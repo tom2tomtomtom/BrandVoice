@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Brand Voice Codifier - Brand Interview{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h1 class="h3 mb-0">Brand Voice Interview</h1>
+            </div>
+            <div class="card-body">
+                <p class="lead">
+                    Answer the following questions to help us understand your brand's voice and personality.
+                    This structured interview will guide you through defining your brand's unique voice characteristics.
+                </p>
+                <p>
+                    Take your time to consider each question carefully - your answers will directly shape the brand voice parameters.
+                </p>
+                
+                <div class="progress mb-3">
+                    <div class="progress-bar" id="interview-progress" role="progressbar" style="width: {{ progress }}%;" 
+                         aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">
+                        Section {{ current_index + 1 }} of {{ sections|length }}
+                    </div>
+                </div>
+                
+                <h2 class="h4 mb-3">{{ current_section|capitalize }} Questions</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form action="{{ url_for('brand_interview.index') }}" method="post" class="needs-validation" novalidate>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    {% for question in questions %}
+                        <div class="mb-4">
+                            <label class="form-label">{{ question.question }}</label>
+                            
+                            {% if question.type == 'multiselect' %}
+                                <select class="form-select" name="{{ question.name }}[]" multiple 
+                                        {% if question.max_selections %}data-max-selections="{{ question.max_selections }}"{% endif %}>
+                                    {% for option in question.options %}
+                                        <option value="{{ option }}" 
+                                                {% if option in responses.get(question.name, []) %}selected{% endif %}>
+                                            {{ option }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if question.max_selections %}
+                                    <div class="form-text">Select up to {{ question.max_selections }} options.</div>
+                                {% endif %}
+                            
+                            {% elif question.type == 'range' %}
+                                <input type="range" class="form-range" name="{{ question.name }}" 
+                                       min="{{ question.min }}" max="{{ question.max }}" 
+                                       value="{{ responses.get(question.name, question.default) }}" 
+                                       id="{{ question.name }}-range">
+                                <div class="d-flex justify-content-between">
+                                    {% for value, label in question.labels.items() %}
+                                        <span class="form-text">{{ label }}</span>
+                                    {% endfor %}
+                                </div>
+                                <div class="text-center mt-2">
+                                    <span class="badge bg-primary" id="{{ question.name }}-value">
+                                        {{ responses.get(question.name, question.default) }}
+                                    </span>
+                                </div>
+                                <script>
+                                    document.getElementById('{{ question.name }}-range').addEventListener('input', function() {
+                                        document.getElementById('{{ question.name }}-value').textContent = this.value;
+                                    });
+                                </script>
+                            
+                            {% elif question.type == 'textarea' %}
+                                <textarea class="form-control" name="{{ question.name }}" rows="3">{{ responses.get(question.name, '') }}</textarea>
+                            
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        {% if current_index > 0 %}
+                            <button type="submit" name="prev_section" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i> Previous Section
+                            </button>
+                        {% else %}
+                            <div></div>
+                        {% endif %}
+                        
+                        {% if current_index < sections|length - 1 %}
+                            <button type="submit" name="next_section" class="btn btn-primary">
+                                Next Section <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        {% else %}
+                            <button type="submit" name="next_section" class="btn btn-success">
+                                <i class="fas fa-check me-2"></i> Complete Interview
+                            </button>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h2 class="h4 mb-0">Interview Sections</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for section in sections %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card {% if section == current_section %}border-primary{% endif %}">
+                                <div class="card-body">
+                                    <h3 class="h5 mb-0">
+                                        {% if sections.index(section) < current_index %}
+                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                        {% elif section == current_section %}
+                                            <i class="fas fa-arrow-right text-primary me-2"></i>
+                                        {% else %}
+                                            <i class="fas fa-circle text-muted me-2"></i>
+                                        {% endif %}
+                                        {{ section|capitalize }}
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle multiselect max selections
+        const multiselects = document.querySelectorAll('select[data-max-selections]');
+        
+        multiselects.forEach(select => {
+            const maxSelections = parseInt(select.dataset.maxSelections);
+            
+            select.addEventListener('change', function() {
+                const selectedOptions = Array.from(this.selectedOptions);
+                
+                if (selectedOptions.length > maxSelections) {
+                    // Keep only the first maxSelections options
+                    for (let i = maxSelections; i < selectedOptions.length; i++) {
+                        selectedOptions[i].selected = false;
+                    }
+                    
+                    // Show warning
+                    alert(`You can select at most ${maxSelections} options.`);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

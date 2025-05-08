@@ -1,0 +1,474 @@
+{% extends 'base.html' %}
+
+{% block title %}Brand Voice Codifier - Brand Interview{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h4 mb-0"><i class="fas fa-comments me-2"></i> Brand Voice Interview</h2>
+            </div>
+            <div class="card-body">
+                <p class="lead">Answer the following questions to help us understand your brand's voice and personality.</p>
+                <p>This structured interview will guide you through defining your brand's unique voice characteristics.</p>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Instructions:</strong> Complete all sections of the interview to generate your brand voice parameters. Your answers will help us understand your brand's unique voice characteristics.
+                </div>
+
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        <h5><i class="fas fa-question-circle me-2 text-primary"></i> What to Expect</h5>
+                        <p>The brand interview will cover the following areas:</p>
+                        <ul>
+                            <li><strong>Brand Personality:</strong> Defining your brand's character traits</li>
+                            <li><strong>Formality Level:</strong> Determining how formal or casual your brand voice should be</li>
+                            <li><strong>Emotional Tone:</strong> Identifying the emotions your brand should convey</li>
+                            <li><strong>Vocabulary Preferences:</strong> Establishing preferred and restricted terminology</li>
+                            <li><strong>Communication Style:</strong> Defining your approach to storytelling and sentence structure</li>
+                            <li><strong>Audience Adaptation:</strong> Understanding how your voice changes for different audiences</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Brand Interview Form -->
+                <form action="{{ url_for('brand_interview') }}" method="post" id="brand-interview-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <!-- Personality Section -->
+                    <div class="card mb-4" id="personality-section">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">1. Brand Personality</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label class="form-label">If your brand were a person, how would you describe their personality? (Select up to 3)</label>
+                                <select class="form-select" name="primary_traits" id="primary-traits" multiple size="8">
+                                    <option value="innovative">Innovative</option>
+                                    <option value="trustworthy">Trustworthy</option>
+                                    <option value="playful">Playful</option>
+                                    <option value="sophisticated">Sophisticated</option>
+                                    <option value="friendly">Friendly</option>
+                                    <option value="authoritative">Authoritative</option>
+                                    <option value="bold">Bold</option>
+                                    <option value="empathetic">Empathetic</option>
+                                    <option value="other">Other (specify below)</option>
+                                </select>
+                                <div class="form-text">Hold Ctrl/Cmd to select multiple options (max 3)</div>
+                            </div>
+
+                            <div class="mb-4" id="primary-traits-other-container" style="display: none;">
+                                <label class="form-label">Please specify other primary trait:</label>
+                                <input type="text" class="form-control" name="primary_traits_other" id="primary-traits-other" placeholder="Enter custom trait">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">What secondary personality traits would your brand have? (Select up to 3)</label>
+                                <select class="form-select" name="secondary_traits" id="secondary-traits" multiple size="8">
+                                    <option value="innovative">Innovative</option>
+                                    <option value="trustworthy">Trustworthy</option>
+                                    <option value="playful">Playful</option>
+                                    <option value="sophisticated">Sophisticated</option>
+                                    <option value="friendly">Friendly</option>
+                                    <option value="authoritative">Authoritative</option>
+                                    <option value="bold">Bold</option>
+                                    <option value="empathetic">Empathetic</option>
+                                    <option value="other">Other (specify below)</option>
+                                </select>
+                                <div class="form-text">Hold Ctrl/Cmd to select multiple options (max 3)</div>
+                            </div>
+
+                            <div class="mb-4" id="secondary-traits-other-container" style="display: none;">
+                                <label class="form-label">Please specify other secondary trait:</label>
+                                <input type="text" class="form-control" name="secondary_traits_other" id="secondary-traits-other" placeholder="Enter custom trait">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Which personality traits would you specifically want to avoid?</label>
+                                <select class="form-select" name="traits_to_avoid" id="traits-to-avoid" multiple size="8">
+                                    <option value="innovative">Innovative</option>
+                                    <option value="trustworthy">Trustworthy</option>
+                                    <option value="playful">Playful</option>
+                                    <option value="sophisticated">Sophisticated</option>
+                                    <option value="friendly">Friendly</option>
+                                    <option value="authoritative">Authoritative</option>
+                                    <option value="bold">Bold</option>
+                                    <option value="empathetic">Empathetic</option>
+                                    <option value="other">Other (specify below)</option>
+                                </select>
+                                <div class="form-text">Hold Ctrl/Cmd to select multiple options</div>
+                            </div>
+
+                            <div class="mb-4" id="traits-to-avoid-other-container" style="display: none;">
+                                <label class="form-label">Please specify other traits to avoid:</label>
+                                <input type="text" class="form-control" name="traits_to_avoid_other" id="traits-to-avoid-other" placeholder="Enter custom trait">
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button type="button" class="btn btn-primary" id="next-to-emotional">
+                                    Next: Emotional Tone <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emotional Tone Section -->
+                    <div class="card mb-4" id="emotional-section" style="display: none;">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">2. Emotional Tone</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label class="form-label">What primary emotions should your brand voice convey? (Select up to 2)</label>
+                                <select class="form-select" name="primary_emotions" id="primary-emotions" multiple size="7">
+                                    <option value="optimistic">Optimistic</option>
+                                    <option value="serious">Serious</option>
+                                    <option value="passionate">Passionate</option>
+                                    <option value="calm">Calm</option>
+                                    <option value="urgent">Urgent</option>
+                                    <option value="reassuring">Reassuring</option>
+                                    <option value="other">Other (specify below)</option>
+                                </select>
+                                <div class="form-text">Hold Ctrl/Cmd to select multiple options (max 2)</div>
+                            </div>
+
+                            <div class="mb-4" id="primary-emotions-other-container" style="display: none;">
+                                <label class="form-label">Please specify other primary emotion:</label>
+                                <input type="text" class="form-control" name="primary_emotions_other" id="primary-emotions-other" placeholder="Enter custom emotion">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">What secondary emotions might be present in your brand voice? (Select up to 2)</label>
+                                <select class="form-select" name="secondary_emotions" id="secondary-emotions" multiple size="7">
+                                    <option value="optimistic">Optimistic</option>
+                                    <option value="serious">Serious</option>
+                                    <option value="passionate">Passionate</option>
+                                    <option value="calm">Calm</option>
+                                    <option value="urgent">Urgent</option>
+                                    <option value="reassuring">Reassuring</option>
+                                    <option value="other">Other (specify below)</option>
+                                </select>
+                                <div class="form-text">Hold Ctrl/Cmd to select multiple options (max 2)</div>
+                            </div>
+
+                            <div class="mb-4" id="secondary-emotions-other-container" style="display: none;">
+                                <label class="form-label">Please specify other secondary emotion:</label>
+                                <input type="text" class="form-control" name="secondary_emotions_other" id="secondary-emotions-other" placeholder="Enter custom emotion">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">How intense should the emotional tone be? (1 = subtle, 10 = very intense)</label>
+                                <input type="range" class="form-range" min="1" max="10" step="1" id="emotional-intensity" name="emotional_intensity" value="5">
+                                <div class="d-flex justify-content-between">
+                                    <span>1 (Subtle)</span>
+                                    <span>5 (Moderate)</span>
+                                    <span>10 (Intense)</span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <span class="badge bg-primary" id="emotional-intensity-value">5</span>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                                <button type="button" class="btn btn-secondary" id="back-to-personality">
+                                    <i class="fas fa-arrow-left me-2"></i> Back: Personality
+                                </button>
+                                <button type="button" class="btn btn-primary" id="next-to-formality">
+                                    Next: Formality <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formality Section -->
+                    <div class="card mb-4" id="formality-section" style="display: none;">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">3. Formality</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label class="form-label">How formal should your brand voice be? (1 = very casual, 10 = very formal)</label>
+                                <input type="range" class="form-range" min="1" max="10" step="1" id="formality-level" name="formality_level" value="5">
+                                <div class="d-flex justify-content-between">
+                                    <span>1 (Very Casual)</span>
+                                    <span>5 (Balanced)</span>
+                                    <span>10 (Very Formal)</span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <span class="badge bg-primary" id="formality-level-value">5</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Should the formality level change in different contexts?</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="formality_varies" id="formality-varies-yes" value="yes">
+                                    <label class="form-check-label" for="formality-varies-yes">
+                                        Yes, it should vary by context
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="formality_varies" id="formality-varies-no" value="no" checked>
+                                    <label class="form-check-label" for="formality-varies-no">
+                                        No, it should be consistent
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-4" id="formality-context-container" style="display: none;">
+                                <label class="form-label">Please describe how formality should vary by context:</label>
+                                <textarea class="form-control" name="formality_context" rows="3" placeholder="Example: More formal in technical documentation, more casual in social media"></textarea>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                                <button type="button" class="btn btn-secondary" id="back-to-emotional">
+                                    <i class="fas fa-arrow-left me-2"></i> Back: Emotional Tone
+                                </button>
+                                <button type="button" class="btn btn-primary" id="next-to-communication">
+                                    Next: Communication Style <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Communication Style Section -->
+                    <div class="card mb-4" id="communication-section" style="display: none;">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">4. Communication Style</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label class="form-label">How storytelling-focused should your brand voice be? (1 = very direct, 10 = very narrative)</label>
+                                <input type="range" class="form-range" min="1" max="10" step="1" id="storytelling-preference" name="storytelling_preference" value="5">
+                                <div class="d-flex justify-content-between">
+                                    <span>1 (Very Direct)</span>
+                                    <span>5 (Balanced)</span>
+                                    <span>10 (Very Narrative)</span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <span class="badge bg-primary" id="storytelling-preference-value">5</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Preferred sentence length:</label>
+                                <select class="form-select" name="sentence_length" id="sentence-length">
+                                    <option value="1">Very short sentences</option>
+                                    <option value="3">Short sentences</option>
+                                    <option value="5" selected>Medium-length sentences</option>
+                                    <option value="7">Long sentences</option>
+                                    <option value="10">Very long, complex sentences</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Preferred sentence complexity:</label>
+                                <select class="form-select" name="sentence_complexity" id="sentence-complexity">
+                                    <option value="1">Very simple structure</option>
+                                    <option value="3">Simple structure</option>
+                                    <option value="5" selected>Moderate complexity</option>
+                                    <option value="7">Complex structure</option>
+                                    <option value="10">Very complex structure</option>
+                                </select>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                                <button type="button" class="btn btn-secondary" id="back-to-formality">
+                                    <i class="fas fa-arrow-left me-2"></i> Back: Formality
+                                </button>
+                                <button type="button" class="btn btn-primary" id="next-to-submit">
+                                    Review & Submit <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review & Submit Section -->
+                    <div class="card mb-4" id="submit-section" style="display: none;">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">5. Review & Submit</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="lead">Please review your answers before submitting.</p>
+
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Once you submit, we'll analyze your responses and generate brand voice parameters that you can view in the Results section.
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                                <button type="button" class="btn btn-secondary" id="back-to-communication">
+                                    <i class="fas fa-arrow-left me-2"></i> Back: Communication Style
+                                </button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-check-circle me-2"></i> Submit Brand Interview
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h3 class="h5 mb-0">Alternative Methods</h3>
+            </div>
+            <div class="card-body">
+                <p>While the brand interview feature is being developed, you can use these alternative methods to analyze your brand voice:</p>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-file-upload text-primary me-2"></i> Document Upload</h5>
+                                <p class="card-text">Upload your existing brand documents to extract key brand voice elements.</p>
+                                <a href="{{ url_for('document_upload') }}" class="btn btn-primary">Go to Document Upload</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-globe text-primary me-2"></i> Web Scraper</h5>
+                                <p class="card-text">Analyze your website content to identify brand voice patterns.</p>
+                                <a href="{{ url_for('web_scraper') }}" class="btn btn-primary">Go to Web Scraper</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Section navigation
+        const sections = {
+            'personality': document.getElementById('personality-section'),
+            'emotional': document.getElementById('emotional-section'),
+            'formality': document.getElementById('formality-section'),
+            'communication': document.getElementById('communication-section'),
+            'submit': document.getElementById('submit-section')
+        };
+
+        // Next buttons
+        document.getElementById('next-to-emotional').addEventListener('click', function() {
+            sections.personality.style.display = 'none';
+            sections.emotional.style.display = 'block';
+        });
+
+        document.getElementById('next-to-formality').addEventListener('click', function() {
+            sections.emotional.style.display = 'none';
+            sections.formality.style.display = 'block';
+        });
+
+        document.getElementById('next-to-communication').addEventListener('click', function() {
+            sections.formality.style.display = 'none';
+            sections.communication.style.display = 'block';
+        });
+
+        document.getElementById('next-to-submit').addEventListener('click', function() {
+            sections.communication.style.display = 'none';
+            sections.submit.style.display = 'block';
+        });
+
+        // Back buttons
+        document.getElementById('back-to-personality').addEventListener('click', function() {
+            sections.emotional.style.display = 'none';
+            sections.personality.style.display = 'block';
+        });
+
+        document.getElementById('back-to-emotional').addEventListener('click', function() {
+            sections.formality.style.display = 'none';
+            sections.emotional.style.display = 'block';
+        });
+
+        document.getElementById('back-to-formality').addEventListener('click', function() {
+            sections.communication.style.display = 'none';
+            sections.formality.style.display = 'block';
+        });
+
+        document.getElementById('back-to-communication').addEventListener('click', function() {
+            sections.submit.style.display = 'none';
+            sections.communication.style.display = 'block';
+        });
+
+        // Show/hide "Other" input fields
+        const setupOtherField = function(selectId, containerId) {
+            const select = document.getElementById(selectId);
+            const container = document.getElementById(containerId);
+
+            select.addEventListener('change', function() {
+                const selectedOptions = Array.from(select.selectedOptions);
+                const hasOther = selectedOptions.some(option => option.value === 'other');
+                container.style.display = hasOther ? 'block' : 'none';
+            });
+        };
+
+        setupOtherField('primary-traits', 'primary-traits-other-container');
+        setupOtherField('secondary-traits', 'secondary-traits-other-container');
+        setupOtherField('traits-to-avoid', 'traits-to-avoid-other-container');
+        setupOtherField('primary-emotions', 'primary-emotions-other-container');
+        setupOtherField('secondary-emotions', 'secondary-emotions-other-container');
+
+        // Show/hide formality context field
+        document.getElementById('formality-varies-yes').addEventListener('change', function() {
+            document.getElementById('formality-context-container').style.display = 'block';
+        });
+
+        document.getElementById('formality-varies-no').addEventListener('change', function() {
+            document.getElementById('formality-context-container').style.display = 'none';
+        });
+
+        // Update range input values
+        const setupRangeValue = function(rangeId, valueId) {
+            const range = document.getElementById(rangeId);
+            const value = document.getElementById(valueId);
+
+            range.addEventListener('input', function() {
+                value.textContent = range.value;
+            });
+        };
+
+        setupRangeValue('emotional-intensity', 'emotional-intensity-value');
+        setupRangeValue('formality-level', 'formality-level-value');
+        setupRangeValue('storytelling-preference', 'storytelling-preference-value');
+
+        // Limit multiple select options
+        const limitSelections = function(selectId, maxSelections) {
+            const select = document.getElementById(selectId);
+
+            select.addEventListener('change', function() {
+                const selectedOptions = Array.from(select.selectedOptions);
+
+                if (selectedOptions.length > maxSelections) {
+                    alert(`Please select a maximum of ${maxSelections} options.`);
+
+                    // Deselect the last selected option
+                    for (let i = 0; i < select.options.length; i++) {
+                        if (select.options[i].selected && !selectedOptions.slice(0, maxSelections).some(opt => opt.value === select.options[i].value)) {
+                            select.options[i].selected = false;
+                        }
+                    }
+                }
+            });
+        };
+
+        limitSelections('primary-traits', 3);
+        limitSelections('secondary-traits', 3);
+        limitSelections('primary-emotions', 2);
+        limitSelections('secondary-emotions', 2);
+    });
+</script>
+{% endblock %}
