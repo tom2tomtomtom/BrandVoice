@@ -311,6 +311,16 @@ def home():
     initialize_session()
     return render_template('index.html', input_methods=session['input_methods'])
 
+@app.route('/restart', methods=['POST'])
+def restart():
+    """Clear the session and restart the application"""
+    # Clear the session
+    session.clear()
+    # Initialize a fresh session
+    initialize_session()
+    flash('Session restarted successfully. All data has been reset.', 'success')
+    return redirect(url_for('home'))
+
 @app.route('/document-upload', methods=['GET', 'POST'])
 def document_upload():
     initialize_session()

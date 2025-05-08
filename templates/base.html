@@ -57,10 +57,42 @@
                             <i class="fas fa-cogs me-1"></i> API Settings
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <form action="{{ url_for('restart') }}" method="post" id="restart-form" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="button" class="btn btn-danger nav-link border-0" id="restart-button"
+                                    style="background-color: transparent;"
+                                    data-bs-toggle="modal" data-bs-target="#restartModal">
+                                <i class="fas fa-redo-alt me-1"></i> Restart
+                            </button>
+                        </form>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
+
+    <!-- Restart Confirmation Modal -->
+    <div class="modal fade" id="restartModal" tabindex="-1" aria-labelledby="restartModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="restartModalLabel"><i class="fas fa-exclamation-triangle me-2"></i> Confirm Restart</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to restart the application? This will clear all your current data and reset the application to its initial state.</p>
+                    <p class="text-danger"><strong>Warning:</strong> This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirm-restart">
+                        <i class="fas fa-redo-alt me-2"></i> Yes, Restart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="container mt-4 mb-5">
         {% with messages = get_flashed_messages(with_categories=true) %}

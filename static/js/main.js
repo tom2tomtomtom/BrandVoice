@@ -167,6 +167,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Handle restart button
+    const restartButton = document.getElementById('confirm-restart');
+    if (restartButton) {
+        restartButton.addEventListener('click', function() {
+            // Show loading state
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Restarting...';
+            this.disabled = true;
+
+            // Submit the restart form
+            document.getElementById('restart-form').submit();
+        });
+    }
 });
 
 // Utility function to format file size
