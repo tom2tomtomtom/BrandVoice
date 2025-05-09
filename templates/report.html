@@ -3,35 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brand Voice Codifier Report</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Brand Voice Report</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/dark-theme.css">
+
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8f9fa;
-        }
-        .report-header {
-            background-color: #4e73df;
-            color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
-        }
-        .report-section {
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
-            padding: 1.5rem;
-        }
-        .section-header {
-            border-bottom: 1px solid #e3e6f0;
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-            color: #4e73df;
-        }
         .trait-badge {
             font-size: 0.9rem;
             padding: 0.5rem 1rem;
@@ -41,92 +30,134 @@
             display: inline-block;
         }
         .primary-trait {
-            background-color: #4e73df;
-            color: white;
+            background-color: var(--text-secondary);
+            color: var(--text-primary);
         }
         .secondary-trait {
-            background-color: #36b9cc;
-            color: white;
+            background-color: var(--card-bg-alt);
+            color: var(--text-primary);
         }
         .avoid-trait {
-            background-color: #e74a3b;
-            color: white;
+            background-color: var(--error-color);
+            color: var(--text-primary);
         }
         .primary-emotion {
-            background-color: #1cc88a;
-            color: white;
+            background-color: var(--text-secondary);
+            color: var(--text-primary);
         }
         .secondary-emotion {
-            background-color: #f6c23e;
-            color: white;
+            background-color: var(--card-bg-alt);
+            color: var(--text-primary);
         }
         .scale-container {
             height: 2rem;
-            background-color: #eaecf4;
+            background-color: var(--card-bg-alt);
             border-radius: 1rem;
             position: relative;
             margin: 1rem 0;
         }
         .scale-value {
             height: 100%;
-            background-color: #4e73df;
+            background-color: var(--text-secondary);
             border-radius: 1rem;
             position: absolute;
             top: 0;
             left: 0;
         }
-        .scale-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 0.25rem;
-            font-size: 0.8rem;
-            color: #858796;
-        }
         .vocabulary-term {
-            background-color: #f8f9fc;
+            background-color: var(--card-bg-alt);
             border-radius: 0.25rem;
             padding: 0.25rem 0.5rem;
             margin-right: 0.5rem;
             margin-bottom: 0.5rem;
             display: inline-block;
             font-size: 0.9rem;
-            border: 1px solid #e3e6f0;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
         }
         .example-copy {
-            background-color: #f8f9fc;
-            border-left: 0.25rem solid #4e73df;
+            background-color: var(--card-bg);
+            border-left: 0.25rem solid var(--text-secondary);
             padding: 1rem;
             margin: 1rem 0;
+            color: var(--text-primary);
         }
-        .report-footer {
-            text-align: center;
-            padding: 2rem 0;
-            color: #858796;
-            font-size: 0.9rem;
-        }
-        .logo {
-            max-height: 50px;
+        .section-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
         }
         @media print {
             body {
-                background-color: white;
+                background-color: white !important;
+                color: black !important;
             }
-            .report-section {
-                box-shadow: none;
-                border: 1px solid #e3e6f0;
+            .container {
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            .card {
+                border: 1px solid #ddd !important;
+                box-shadow: none !important;
+                background-color: white !important;
+            }
+            .card-header {
+                background-color: #f8f9fa !important;
+                color: #333 !important;
+            }
+            .text-white, .text-primary {
+                color: #333 !important;
+            }
+            .progress {
+                border: 1px solid #ddd !important;
+            }
+            .progress-bar {
+                background-color: #6c757d !important;
+            }
+            .badge {
+                background-color: #6c757d !important;
+                color: white !important;
+            }
+            .btn {
+                display: none !important;
             }
             .no-print {
-                display: none;
+                display: none !important;
+            }
+            .trait-badge, .primary-trait, .secondary-trait, .primary-emotion, .secondary-emotion {
+                background-color: #6c757d !important;
+                color: white !important;
+            }
+            .scale-container {
+                background-color: #eee !important;
+            }
+            .scale-value {
+                background-color: #6c757d !important;
+            }
+            .vocabulary-term {
+                background-color: #f8f9fa !important;
+                color: #333 !important;
+                border: 1px solid #ddd !important;
+            }
+            .example-copy {
+                background-color: #f8f9fa !important;
+                border-left: 0.25rem solid #6c757d !important;
+                color: #333 !important;
+            }
+            .section-header {
+                border-bottom: 1px solid #ddd !important;
+                color: #333 !important;
             }
         }
     </style>
 </head>
 <body>
     <!-- Navigation Bar (hidden when printing) -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary no-print mb-4">
+    <nav class="navbar navbar-expand-lg navbar-dark no-print mb-4">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('home') }}">
-                <i class="fas fa-bullhorn me-2"></i>Brand Voice Codifier
+                <img src="https://res.cloudinary.com/dkl8kiemy/image/upload/v1746752550/Cuttable-logo-1_jj7ou7.webp" alt="Brand Voice Codifier" height="30">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -169,268 +200,328 @@
     </nav>
 
     <div class="container">
-        <div class="report-header text-center">
-            <h1><i class="fas fa-microphone-alt me-2"></i> Brand Voice Codifier</h1>
-            <p class="lead">Comprehensive Brand Voice Report</p>
-            <p>Generated on: {{ timestamp }}</p>
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header card-header-feature">
+                        <h1 class="h3 mb-0">Brand Voice Codifier</h1>
+                        <h2 class="h5 mb-0">Comprehensive Brand Voice Report</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">Generated on: {{ timestamp }}</p>
 
-            <div class="mt-4 no-print">
-                <a href="{{ url_for('results') }}" class="btn btn-light">
-                    <i class="fas fa-arrow-left me-2"></i> Back to Results
-                </a>
-                <button onclick="window.print()" class="btn btn-success ms-2">
-                    <i class="fas fa-print me-2"></i> Print Report
-                </button>
+                        <div class="d-flex justify-content-end no-print">
+                            <a href="{{ url_for('results') }}" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-arrow-left me-2"></i> Back to Results
+                            </a>
+                            <button onclick="window.print()" class="btn btn-outline-secondary">
+                                <i class="fas fa-print me-2"></i> Print Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="row mb-4">
             <div class="col-12">
-                <div class="report-section">
-                    <h2 class="section-header">Executive Summary</h2>
-                    <p class="lead">This report outlines the key parameters that define your brand's unique voice. Use these guidelines to maintain consistency across all communications.</p>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="h5 mb-0">Executive Summary</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>This report outlines the key parameters that define your brand's unique voice. Use these guidelines to maintain consistency across all communications.</p>
 
-                    <div class="row mt-4">
-                        <div class="col-md-4 text-center mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <i class="fas fa-user-tie fa-3x text-primary mb-3"></i>
-                                    <h5>Personality</h5>
-                                    <p>{{ brand_parameters.personality.primary_traits|join(', ')|capitalize if brand_parameters.personality.primary_traits else 'Not defined' }}</p>
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <h5 class="text-primary">Personality</h5>
+                                <p>
+                                    {% for trait in brand_parameters.personality.primary_traits %}
+                                        {{ trait|capitalize }}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <h5 class="text-primary">Emotional Tone</h5>
+                                <p>
+                                    {% for emotion in brand_parameters.emotional_tone.primary_emotions %}
+                                        {{ emotion|capitalize }}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <h5 class="text-primary">Formality Level</h5>
+                                <p>
+                                    {% if brand_parameters.formality.level <= 3 %}
+                                        Very Casual
+                                    {% elif brand_parameters.formality.level <= 5 %}
+                                        Casual
+                                    {% elif brand_parameters.formality.level <= 7 %}
+                                        Neutral
+                                    {% elif brand_parameters.formality.level <= 9 %}
+                                        Formal
+                                    {% else %}
+                                        Very Formal
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3 class="h5 mb-0">Brand Personality</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h5 class="text-primary">Primary Traits</h5>
+                            <div class="mb-2">
+                                {% if brand_parameters.personality.primary_traits %}
+                                    {% for trait in brand_parameters.personality.primary_traits %}
+                                        <span class="trait-badge primary-trait">{{ trait|capitalize }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="text-muted">No primary traits defined</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <h5 class="text-primary">Secondary Traits</h5>
+                            <div class="mb-2">
+                                {% if brand_parameters.personality.secondary_traits %}
+                                    {% for trait in brand_parameters.personality.secondary_traits %}
+                                        <span class="trait-badge secondary-trait">{{ trait|capitalize }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="text-muted">No secondary traits defined</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div>
+                            <h5 class="text-primary">Traits to Avoid</h5>
+                            <div>
+                                {% if brand_parameters.personality.traits_to_avoid %}
+                                    {% for trait in brand_parameters.personality.traits_to_avoid %}
+                                        <span class="trait-badge avoid-trait">{{ trait|capitalize }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="text-muted">No traits to avoid defined</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3 class="h5 mb-0">Emotional Tone</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h5 class="text-primary">Primary Emotions</h5>
+                            <div class="mb-2">
+                                {% if brand_parameters.emotional_tone.primary_emotions %}
+                                    {% for emotion in brand_parameters.emotional_tone.primary_emotions %}
+                                        <span class="trait-badge primary-emotion">{{ emotion|capitalize }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="text-muted">No primary emotions defined</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <h5 class="text-primary">Secondary Emotions</h5>
+                            <div class="mb-2">
+                                {% if brand_parameters.emotional_tone.secondary_emotions %}
+                                    {% for emotion in brand_parameters.emotional_tone.secondary_emotions %}
+                                        <span class="trait-badge secondary-emotion">{{ emotion|capitalize }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="text-muted">No secondary emotions defined</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <h5 class="text-primary">Emotional Intensity</h5>
+                            <div class="scale-container">
+                                <div class="scale-value" style="width: {{ brand_parameters.emotional_tone.intensity * 10 }}%;"></div>
+                            </div>
+                            <div class="scale-labels">
+                                <span>Subtle</span>
+                                <span>Moderate</span>
+                                <span>Intense</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3 class="h5 mb-0">Formality</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h5 class="text-primary">Formality Level</h5>
+                            <div class="scale-container">
+                                <div class="scale-value" style="width: {{ brand_parameters.formality.level * 10 }}%;"></div>
+                            </div>
+                            <div class="scale-labels">
+                                <span>Very Casual</span>
+                                <span>Neutral</span>
+                                <span>Very Formal</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-primary">Context Variations</h5>
+                            {% if brand_parameters.formality.context_variations %}
+                                <ul class="text-white">
+                                    {% for context, level in brand_parameters.formality.context_variations.items() %}
+                                        <li><strong>{{ context|capitalize }}:</strong> {{ level }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted">No context variations defined</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3 class="h5 mb-0">Communication Style</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h5 class="text-primary">Storytelling Preference</h5>
+                            <div class="scale-container">
+                                <div class="scale-value" style="width: {{ brand_parameters.communication_style.storytelling_preference * 10 }}%;"></div>
+                            </div>
+                            <div class="scale-labels">
+                                <span>Very Direct</span>
+                                <span>Balanced</span>
+                                <span>Very Narrative</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-primary">Sentence Structure</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Length:</strong>
+                                        {{ 'Very Long' if brand_parameters.communication_style.sentence_structure.length_preference > 8 else 'Long' if brand_parameters.communication_style.sentence_structure.length_preference > 6 else 'Medium' if brand_parameters.communication_style.sentence_structure.length_preference > 4 else 'Short' if brand_parameters.communication_style.sentence_structure.length_preference > 2 else 'Very Short' }}
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Complexity:</strong>
+                                        {{ 'Very Complex' if brand_parameters.communication_style.sentence_structure.complexity_preference > 8 else 'Complex' if brand_parameters.communication_style.sentence_structure.complexity_preference > 6 else 'Moderate' if brand_parameters.communication_style.sentence_structure.complexity_preference > 4 else 'Simple' if brand_parameters.communication_style.sentence_structure.complexity_preference > 2 else 'Very Simple' }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4 text-center mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <i class="fas fa-heart fa-3x text-primary mb-3"></i>
-                                    <h5>Emotional Tone</h5>
-                                    <p>{{ brand_parameters.emotional_tone.primary_emotions|join(', ')|capitalize if brand_parameters.emotional_tone.primary_emotions else 'Not defined' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="h5 mb-0">Vocabulary</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="text-primary">Preferred Terms</h5>
+                                <div class="d-flex flex-wrap">
+                                    {% for term in brand_parameters.vocabulary.preferred_terms %}
+                                        <span class="badge bg-secondary m-1">{{ term }}</span>
+                                    {% else %}
+                                        <p class="text-muted">No preferred terms defined</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="text-primary">Restricted Terms</h5>
+                                <div class="d-flex flex-wrap">
+                                    {% for term in brand_parameters.vocabulary.restricted_terms %}
+                                        <span class="badge bg-danger m-1">{{ term }}</span>
+                                    {% else %}
+                                        <p class="text-muted">No restricted terms defined</p>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4 text-center mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <i class="fas fa-balance-scale fa-3x text-primary mb-3"></i>
-                                    <h5>Formality Level</h5>
-                                    <p>{{ 'Very Formal' if brand_parameters.formality.level > 8 else 'Formal' if brand_parameters.formality.level > 6 else 'Neutral' if brand_parameters.formality.level > 4 else 'Casual' if brand_parameters.formality.level > 2 else 'Very Casual' }}</p>
-                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="h5 mb-0">Example Copy</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <blockquote class="blockquote">
+                                    <p>{{ example_copy | nl2br | safe }}</p>
+                                </blockquote>
                             </div>
                         </div>
+                        <p class="text-muted">This example demonstrates how your brand voice parameters translate into actual copy.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="report-section">
-                    <h2 class="section-header"><i class="fas fa-user-tie me-2"></i> Brand Personality</h2>
-
-                    <h5>Primary Traits</h5>
-                    <div class="mb-4">
-                        {% if brand_parameters.personality.primary_traits %}
-                            {% for trait in brand_parameters.personality.primary_traits %}
-                                <span class="trait-badge primary-trait">{{ trait|capitalize }}</span>
-                            {% endfor %}
-                        {% else %}
-                            <p class="text-muted">No primary traits defined</p>
-                        {% endif %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="h5 mb-0">Export Options</h3>
                     </div>
-
-                    <h5>Secondary Traits</h5>
-                    <div class="mb-4">
-                        {% if brand_parameters.personality.secondary_traits %}
-                            {% for trait in brand_parameters.personality.secondary_traits %}
-                                <span class="trait-badge secondary-trait">{{ trait|capitalize }}</span>
-                            {% endfor %}
-                        {% else %}
-                            <p class="text-muted">No secondary traits defined</p>
-                        {% endif %}
-                    </div>
-
-                    <h5>Traits to Avoid</h5>
-                    <div>
-                        {% if brand_parameters.personality.traits_to_avoid %}
-                            {% for trait in brand_parameters.personality.traits_to_avoid %}
-                                <span class="trait-badge avoid-trait">{{ trait|capitalize }}</span>
-                            {% endfor %}
-                        {% else %}
-                            <p class="text-muted">No traits to avoid defined</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 mb-4">
-                <div class="report-section">
-                    <h2 class="section-header"><i class="fas fa-heart me-2"></i> Emotional Tone</h2>
-
-                    <h5>Primary Emotions</h5>
-                    <div class="mb-4">
-                        {% if brand_parameters.emotional_tone.primary_emotions %}
-                            {% for emotion in brand_parameters.emotional_tone.primary_emotions %}
-                                <span class="trait-badge primary-emotion">{{ emotion|capitalize }}</span>
-                            {% endfor %}
-                        {% else %}
-                            <p class="text-muted">No primary emotions defined</p>
-                        {% endif %}
-                    </div>
-
-                    <h5>Secondary Emotions</h5>
-                    <div class="mb-4">
-                        {% if brand_parameters.emotional_tone.secondary_emotions %}
-                            {% for emotion in brand_parameters.emotional_tone.secondary_emotions %}
-                                <span class="trait-badge secondary-emotion">{{ emotion|capitalize }}</span>
-                            {% endfor %}
-                        {% else %}
-                            <p class="text-muted">No secondary emotions defined</p>
-                        {% endif %}
-                    </div>
-
-                    <h5>Emotional Intensity</h5>
-                    <div class="scale-container">
-                        <div class="scale-value" style="width: {{ brand_parameters.emotional_tone.intensity * 10 }}%;"></div>
-                    </div>
-                    <div class="scale-labels">
-                        <span>Subtle</span>
-                        <span>Moderate</span>
-                        <span>Intense</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="report-section">
-                    <h2 class="section-header"><i class="fas fa-balance-scale me-2"></i> Formality</h2>
-
-                    <h5>Formality Level</h5>
-                    <div class="scale-container">
-                        <div class="scale-value" style="width: {{ brand_parameters.formality.level * 10 }}%;"></div>
-                    </div>
-                    <div class="scale-labels">
-                        <span>Very Casual</span>
-                        <span>Neutral</span>
-                        <span>Very Formal</span>
-                    </div>
-
-                    <h5 class="mt-4">Context Variations</h5>
-                    {% if brand_parameters.formality.context_variations %}
-                        <ul>
-                            {% for context, level in brand_parameters.formality.context_variations.items() %}
-                                <li><strong>{{ context|capitalize }}:</strong> {{ level }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted">No context variations defined</p>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="col-md-6 mb-4">
-                <div class="report-section">
-                    <h2 class="section-header"><i class="fas fa-comment-alt me-2"></i> Communication Style</h2>
-
-                    <h5>Storytelling Preference</h5>
-                    <div class="scale-container">
-                        <div class="scale-value" style="width: {{ brand_parameters.communication_style.storytelling_preference * 10 }}%;"></div>
-                    </div>
-                    <div class="scale-labels">
-                        <span>Very Direct</span>
-                        <span>Balanced</span>
-                        <span>Very Narrative</span>
-                    </div>
-
-                    <h5 class="mt-4">Sentence Structure</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Length:</strong>
-                                {{ 'Very Long' if brand_parameters.communication_style.sentence_structure.length_preference > 8 else 'Long' if brand_parameters.communication_style.sentence_structure.length_preference > 6 else 'Medium' if brand_parameters.communication_style.sentence_structure.length_preference > 4 else 'Short' if brand_parameters.communication_style.sentence_structure.length_preference > 2 else 'Very Short' }}
-                            </p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Complexity:</strong>
-                                {{ 'Very Complex' if brand_parameters.communication_style.sentence_structure.complexity_preference > 8 else 'Complex' if brand_parameters.communication_style.sentence_structure.complexity_preference > 6 else 'Moderate' if brand_parameters.communication_style.sentence_structure.complexity_preference > 4 else 'Simple' if brand_parameters.communication_style.sentence_structure.complexity_preference > 2 else 'Very Simple' }}
-                            </p>
+                    <div class="card-body no-print">
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-outline-secondary" onclick="window.print()">
+                                <i class="fas fa-print me-2"></i> Print Report
+                            </button>
+                            <a href="{{ url_for('export', format='json') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-download me-2"></i> Download JSON
+                            </a>
+                            <a href="{{ url_for('results') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i> Back to Results
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-12 mb-4">
-                <div class="report-section">
-                    <h2 class="section-header"><i class="fas fa-book me-2"></i> Vocabulary</h2>
-
-                    <h5>Preferred Terms</h5>
-                    <div class="mb-4">
-                        {% if brand_parameters.vocabulary.preferred_terms %}
-                            {% for term in brand_parameters.vocabulary.preferred_terms %}
-                                <span class="vocabulary-term">{{ term }}</span>
-                            {% endfor %}
-                        {% else %}
-                            <p class="text-muted">No preferred terms defined</p>
-                        {% endif %}
-                    </div>
-
-                    <h5>Restricted Terms</h5>
-                    <div>
-                        {% if brand_parameters.vocabulary.restricted_terms %}
-                            {% for term in brand_parameters.vocabulary.restricted_terms %}
-                                <span class="vocabulary-term text-danger">{{ term }}</span>
-                            {% endfor %}
-                        {% else %}
-                            <p class="text-muted">No restricted terms defined</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-12 mb-4">
-                <div class="report-section">
-                    <h2 class="section-header"><i class="fas fa-pen-fancy me-2"></i> Example Copy</h2>
-
-                    <div class="example-copy">
-                        {{ example_copy|nl2br|safe }}
-                    </div>
-
-                    <p class="text-muted mt-3">This example demonstrates how your brand voice parameters translate into actual copy.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="row no-print">
-            <div class="col-12 mb-4">
-                <div class="report-section">
-                    <h2 class="section-header"><i class="fas fa-download me-2"></i> Export Options</h2>
-
-                    <div class="d-flex flex-wrap gap-3">
-                        <a href="{{ url_for('export', format='json') }}" class="btn btn-primary">
-                            <i class="fas fa-file-code me-2"></i> Download as JSON
-                        </a>
-                        <button onclick="window.print()" class="btn btn-success">
-                            <i class="fas fa-print me-2"></i> Print Report
-                        </button>
-                        <a href="{{ url_for('export', format='pdf') }}" class="btn btn-danger">
-                            <i class="fas fa-file-pdf me-2"></i> Download as PDF
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="report-footer">
-            <p>Generated by Brand Voice Codifier</p>
-            <p>© {{ current_year }} Brand Voice Codifier. All rights reserved.</p>
-        </div>
+        <footer class="text-center mt-5 mb-3">
+            <p class="text-muted">Generated by Brand Voice Codifier</p>
+            <p class="text-muted small">© {{ current_year }} Brand Voice Codifier. All rights reserved.</p>
+        </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
