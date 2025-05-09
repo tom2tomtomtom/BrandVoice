@@ -6,7 +6,7 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header card-header-feature">
                 <h2 class="h4 mb-0"><i class="fas fa-chart-bar me-2"></i> Brand Voice Parameters</h2>
             </div>
             <div class="card-body">
@@ -14,9 +14,9 @@
 
                 <div class="row mb-4">
                     <div class="col-md-4 mb-3">
-                        <div class="card bg-light">
+                        <div class="info-card">
                             <div class="card-body">
-                                <h5><i class="fas fa-check-circle me-2 text-success"></i> Input Methods Used</h5>
+                                <h5><i class="fas fa-check-circle me-2"></i> Input Methods Used</h5>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item {% if input_methods.document_upload.used %}list-group-item-success{% else %}list-group-item-light{% endif %}">
                                         <i class="fas {% if input_methods.document_upload.used %}fa-check-circle text-success{% else %}fa-times-circle text-muted{% endif %} me-2"></i>
@@ -36,9 +36,9 @@
                     </div>
 
                     <div class="col-md-8 mb-3">
-                        <div class="card bg-light">
+                        <div class="info-card">
                             <div class="card-body">
-                                <h5><i class="fas fa-file-export me-2 text-primary"></i> Export & Integration Options</h5>
+                                <h5><i class="fas fa-file-export me-2"></i> Export & Integration Options</h5>
                                 <p>Export your brand voice parameters for integration with copywriting systems.</p>
                                 <div class="d-flex flex-wrap gap-2">
                                     <a href="{{ url_for('export') }}" class="btn btn-primary">
@@ -244,7 +244,7 @@
                                         {% if brand_parameters.vocabulary.preferred_terms %}
                                             <div class="d-flex flex-wrap">
                                                 {% for term in brand_parameters.vocabulary.preferred_terms %}
-                                                    <span class="badge bg-primary m-1">{{ term }}</span>
+                                                    <span class="badge bg-secondary m-1">{{ term }}</span>
                                                 {% endfor %}
                                             </div>
                                         {% else %}
@@ -258,7 +258,7 @@
                                 <div class="mb-3">
                                     <h5>Jargon Level</h5>
                                     <div class="progress mb-2" style="height: 25px;">
-                                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ brand_parameters.vocabulary.jargon_level * 10 }}%;"
+                                        <div class="progress-bar bg-secondary" role="progressbar" style="width: {{ brand_parameters.vocabulary.jargon_level * 10 }}%;"
                                              aria-valuenow="{{ brand_parameters.vocabulary.jargon_level }}" aria-valuemin="0" aria-valuemax="10">
                                             {{ brand_parameters.vocabulary.jargon_level }}/10
                                         </div>
@@ -272,7 +272,7 @@
                                 <div class="mb-3">
                                     <h5>Technical Complexity</h5>
                                     <div class="progress mb-2" style="height: 25px;">
-                                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ brand_parameters.vocabulary.technical_complexity * 10 }}%;"
+                                        <div class="progress-bar bg-secondary" role="progressbar" style="width: {{ brand_parameters.vocabulary.technical_complexity * 10 }}%;"
                                              aria-valuenow="{{ brand_parameters.vocabulary.technical_complexity }}" aria-valuemin="0" aria-valuemax="10">
                                             {{ brand_parameters.vocabulary.technical_complexity }}/10
                                         </div>
@@ -301,7 +301,7 @@
                                 <div class="mb-3">
                                     <h5>Storytelling vs. Direct</h5>
                                     <div class="progress mb-2" style="height: 25px;">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ brand_parameters.communication_style.storytelling_preference * 10 }}%;"
+                                        <div class="progress-bar bg-secondary" role="progressbar" style="width: {{ brand_parameters.communication_style.storytelling_preference * 10 }}%;"
                                              aria-valuenow="{{ brand_parameters.communication_style.storytelling_preference }}" aria-valuemin="0" aria-valuemax="10">
                                             {{ brand_parameters.communication_style.storytelling_preference }}/10
                                         </div>
@@ -341,13 +341,13 @@
 <div class="row mt-4">
     <div class="col-12">
         <div class="card">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header card-header-feature">
                 <h2 class="h4 mb-0"><i class="fas fa-pen me-2"></i> Example Copy</h2>
             </div>
             <div class="card-body">
                 <p class="lead">Based on your brand voice parameters, here's an example of copy that reflects your brand voice:</p>
 
-                <div class="card bg-light mb-4">
+                <div class="card mb-4">
                     <div class="card-body">
                         <blockquote class="blockquote">
                             <p>{{ example_copy | nl2br | safe }}</p>
@@ -426,10 +426,10 @@
                         {{ 10 if 'empathetic' in brand_parameters.personality.primary_traits else
                            5 if 'empathetic' in brand_parameters.personality.secondary_traits else 0 }}
                     ],
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(196, 196, 196, 0.2)',
+                    borderColor: 'rgba(196, 196, 196, 1)',
                     borderWidth: 2,
-                    pointBackgroundColor: 'rgba(54, 162, 235, 1)'
+                    pointBackgroundColor: 'rgba(196, 196, 196, 1)'
                 }]
             },
             options: {
@@ -529,14 +529,14 @@
                         {{ brand_parameters.communication_style.sentence_structure.complexity_preference }}
                     ],
                     backgroundColor: [
-                        'rgba(75, 192, 192, 0.7)',
-                        'rgba(75, 192, 192, 0.7)',
-                        'rgba(75, 192, 192, 0.7)'
+                        'rgba(196, 196, 196, 0.7)',
+                        'rgba(196, 196, 196, 0.7)',
+                        'rgba(196, 196, 196, 0.7)'
                     ],
                     borderColor: [
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(75, 192, 192, 1)'
+                        'rgba(196, 196, 196, 1)',
+                        'rgba(196, 196, 196, 1)',
+                        'rgba(196, 196, 196, 1)'
                     ],
                     borderWidth: 1
                 }]
