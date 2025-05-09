@@ -6,15 +6,15 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header card-header-feature">
                 <h2 class="h4 mb-0"><i class="fas fa-cogs me-2"></i> API Integration Settings</h2>
             </div>
             <div class="card-body">
                 <p class="lead">Configure API integration to automatically send your brand voice parameters to external copywriting systems.</p>
-                
+
                 <form action="{{ url_for('api_settings') }}" method="post" class="mt-4">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    
+
                     <div class="mb-4">
                         <label for="api_provider" class="form-label">API Provider</label>
                         <select class="form-select" id="api_provider" name="api_provider">
@@ -26,7 +26,7 @@
                         </select>
                         <div class="form-text">Select the AI provider you want to integrate with.</div>
                     </div>
-                    
+
                     <div class="mb-4">
                         <label for="api_key" class="form-label">API Key</label>
                         <div class="input-group">
@@ -38,13 +38,13 @@
                         </div>
                         <div class="form-text">Your API key will be stored securely in your session.</div>
                     </div>
-                    
+
                     <div class="mb-4 form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="integration_enabled" name="integration_enabled" {% if api_settings.integration_enabled %}checked{% endif %}>
                         <label class="form-check-label" for="integration_enabled">Enable API Integration</label>
                         <div class="form-text">When enabled, your brand voice parameters will be automatically sent to the API provider.</div>
                     </div>
-                    
+
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save me-2"></i> Save API Settings
@@ -59,18 +59,18 @@
 <div class="row mt-4">
     <div class="col-12">
         <div class="card">
-            <div class="card-header bg-light">
+            <div class="card-header">
                 <h3 class="h5 mb-0">API Integration Information</h3>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <h5><i class="fas fa-info-circle text-primary me-2"></i> What This Does</h5>
+                        <h5><i class="fas fa-info-circle text-secondary me-2"></i> What This Does</h5>
                         <p>API integration allows you to automatically send your brand voice parameters to external AI copywriting systems. This enables these systems to generate content that matches your brand's unique voice.</p>
                         <p>When enabled, your brand voice parameters will be sent to the selected API provider whenever you update them through any of the input methods.</p>
                     </div>
                     <div class="col-md-6">
-                        <h5><i class="fas fa-shield-alt text-primary me-2"></i> Security Information</h5>
+                        <h5><i class="fas fa-shield-alt text-secondary me-2"></i> Security Information</h5>
                         <ul>
                             <li>Your API key is stored only in your session and is not saved to any database.</li>
                             <li>The connection to the API provider is made using secure HTTPS.</li>
@@ -79,10 +79,10 @@
                         </ul>
                     </div>
                 </div>
-                
+
                 <div class="row mt-4">
                     <div class="col-md-6">
-                        <h5><i class="fas fa-plug text-primary me-2"></i> Supported Providers</h5>
+                        <h5><i class="fas fa-plug text-secondary me-2"></i> Supported Providers</h5>
                         <div class="card-group">
                             <div class="card">
                                 <div class="card-body">
@@ -113,7 +113,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <h5><i class="fas fa-sync text-primary me-2"></i> Synchronization Status</h5>
+                        <h5><i class="fas fa-sync text-secondary me-2"></i> Synchronization Status</h5>
                         {% if api_settings.last_sync_time %}
                             <div class="alert alert-success">
                                 <i class="fas fa-check-circle me-2"></i> Last synchronized: {{ api_settings.last_sync_time }}
@@ -126,9 +126,9 @@
                             <p>Your brand voice parameters have not been synchronized with any API provider yet.</p>
                             <p>Save your API settings and complete at least one input method to enable synchronization.</p>
                         {% endif %}
-                        
+
                         <div class="d-grid gap-2 mt-3">
-                            <button id="sync-now-btn" class="btn btn-outline-primary" {% if not api_settings.integration_enabled or not api_settings.api_key %}disabled{% endif %}>
+                            <button id="sync-now-btn" class="btn btn-outline-secondary" {% if not api_settings.integration_enabled or not api_settings.api_key %}disabled{% endif %}>
                                 <i class="fas fa-sync me-2"></i> Synchronize Now
                             </button>
                         </div>
@@ -146,11 +146,11 @@
         // Toggle API key visibility
         const apiKeyInput = document.getElementById('api_key');
         const toggleApiKeyBtn = document.getElementById('toggle-api-key');
-        
+
         toggleApiKeyBtn.addEventListener('click', function() {
             const type = apiKeyInput.getAttribute('type') === 'password' ? 'text' : 'password';
             apiKeyInput.setAttribute('type', type);
-            
+
             const icon = toggleApiKeyBtn.querySelector('i');
             if (type === 'text') {
                 icon.className = 'fas fa-eye-slash';
@@ -158,14 +158,14 @@
                 icon.className = 'fas fa-eye';
             }
         });
-        
+
         // Sync now button
         const syncNowBtn = document.getElementById('sync-now-btn');
         if (syncNowBtn) {
             syncNowBtn.addEventListener('click', function() {
                 this.disabled = true;
                 this.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Synchronizing...';
-                
+
                 fetch('/api/sync', {
                     method: 'POST',
                     headers: {
