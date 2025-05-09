@@ -4,7 +4,7 @@ import nltk
 import PyPDF2
 import requests
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, make_response
 from flask_wtf.csrf import CSRFProtect
 from bs4 import BeautifulSoup
 from werkzeug.utils import secure_filename
@@ -576,6 +576,7 @@ def export():
     export_format = request.args.get('format', 'html').lower()
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     file_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    css_version = datetime.now().strftime("%Y%m%d%H%M%S")  # Add a version for cache busting
 
     if export_format == 'json':
         # Generate JSON
@@ -592,11 +593,19 @@ def export():
 
     else:  # HTML report (default)
         # Generate HTML report
-        return render_template('report.html',
+        response = make_response(render_template('report.html',
                               brand_parameters=session['brand_parameters'],
                               example_copy=generate_example_copy(session['brand_parameters']),
                               timestamp=timestamp,
-                              current_year=datetime.now().year)
+                              css_version=css_version,
+                              current_year=datetime.now().year))
+
+        # Add cache control headers
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+
+        return response
 
 @app.route('/api_settings', methods=['GET', 'POST'])
 def api_settings():
