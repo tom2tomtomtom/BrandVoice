@@ -679,6 +679,23 @@ textarea.form-control {
     --chart-color5: #9966ff;
 }
 
+/* Fix for white semi-circles in charts */
+.chart-container {
+    position: relative;
+}
+
+.chart-container canvas {
+    background-color: var(--card-bg) !important;
+}
+
+/* Ensure chart backgrounds match dark theme */
+#personalityChart,
+#emotionalChart,
+#formalityChart,
+#communicationChart {
+    background-color: var(--card-bg) !important;
+}
+
 /* Feature Card */
 .feature-card {
     text-align: center;

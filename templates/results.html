@@ -368,6 +368,17 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Global Chart.js plugin to set dark background
+        Chart.register({
+            id: 'darkBackground',
+            beforeDraw: (chart) => {
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--card-bg');
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.restore();
+            }
+        });
         // API Sync Button
         const syncApiBtn = document.getElementById('sync-api-btn');
         if (syncApiBtn) {
@@ -402,6 +413,9 @@
 
         // Personality Chart
         const personalityCtx = document.getElementById('personalityChart').getContext('2d');
+        // Fill the background with dark color
+        personalityCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--card-bg');
+        personalityCtx.fillRect(0, 0, personalityCtx.canvas.width, personalityCtx.canvas.height);
         const personalityChart = new Chart(personalityCtx, {
             type: 'radar',
             data: {
@@ -465,6 +479,9 @@
 
         // Emotional Tone Chart
         const emotionalCtx = document.getElementById('emotionalChart').getContext('2d');
+        // Fill the background with dark color
+        emotionalCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--card-bg');
+        emotionalCtx.fillRect(0, 0, emotionalCtx.canvas.width, emotionalCtx.canvas.height);
         const emotionalChart = new Chart(emotionalCtx, {
             type: 'pie',
             data: {
@@ -516,6 +533,9 @@
 
         // Formality Chart
         const formalityCtx = document.getElementById('formalityChart').getContext('2d');
+        // Fill the background with dark color
+        formalityCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--card-bg');
+        formalityCtx.fillRect(0, 0, formalityCtx.canvas.width, formalityCtx.canvas.height);
         const formalityChart = new Chart(formalityCtx, {
             type: 'gauge',
             data: {
@@ -558,6 +578,9 @@
 
         // Communication Style Chart
         const communicationCtx = document.getElementById('communicationChart').getContext('2d');
+        // Fill the background with dark color
+        communicationCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--card-bg');
+        communicationCtx.fillRect(0, 0, communicationCtx.canvas.width, communicationCtx.canvas.height);
         const communicationChart = new Chart(communicationCtx, {
             type: 'bar',
             data: {
