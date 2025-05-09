@@ -258,6 +258,14 @@ a:hover {
     border-radius: var(--border-radius-sm);
 }
 
+.info-card ul,
+.info-card ol,
+.info-card li,
+.feature-card p,
+.card-text {
+    color: var(--text-primary);
+}
+
 /* Button Styles - Standardized */
 .btn {
     border-radius: var(--border-radius-md);
@@ -663,12 +671,23 @@ textarea.form-control {
 }
 
 /* Icon Standardization */
-.icon-primary {
-    color: var(--icon-color);
+.icon-primary,
+.card-title i,
+.info-card i,
+.feature-card i,
+.alert i,
+.dropdown-item i,
+.btn i,
+.nav-link i {
+    color: var(--text-secondary) !important;
 }
 
 .icon-accent {
-    color: var(--icon-accent);
+    color: var(--text-secondary) !important;
+}
+
+.feature-card-icon {
+    color: var(--text-secondary) !important;
 }
 
 .icon-lg {

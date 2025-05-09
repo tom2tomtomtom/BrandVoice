@@ -1,16 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}Brand Voice Codifier - Brand Interview{% endblock %}
+{% block title %}Brand Interview{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <h1>Brand Voice Interview</h1>
+    <p class="lead">Answer the following questions to help us understand your brand's voice and personality.</p>
+</div>
+
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h2 class="h4 mb-0"><i class="fas fa-comments me-2"></i> Brand Voice Interview</h2>
+            <div class="card-header card-header-feature">
+                <h2 class="h4 mb-0"><i class="fas fa-comments me-2"></i> Interview Questions</h2>
             </div>
             <div class="card-body">
-                <p class="lead">Answer the following questions to help us understand your brand's voice and personality.</p>
                 <p>This structured interview will guide you through defining your brand's unique voice characteristics.</p>
 
                 <div class="alert alert-info">
@@ -18,19 +22,17 @@
                     <strong>Instructions:</strong> Complete all sections of the interview to generate your brand voice parameters. Your answers will help us understand your brand's unique voice characteristics.
                 </div>
 
-                <div class="card bg-light mb-4">
-                    <div class="card-body">
-                        <h5><i class="fas fa-question-circle me-2 text-primary"></i> What to Expect</h5>
-                        <p>The brand interview will cover the following areas:</p>
-                        <ul>
-                            <li><strong>Brand Personality:</strong> Defining your brand's character traits</li>
-                            <li><strong>Formality Level:</strong> Determining how formal or casual your brand voice should be</li>
-                            <li><strong>Emotional Tone:</strong> Identifying the emotions your brand should convey</li>
-                            <li><strong>Vocabulary Preferences:</strong> Establishing preferred and restricted terminology</li>
-                            <li><strong>Communication Style:</strong> Defining your approach to storytelling and sentence structure</li>
-                            <li><strong>Audience Adaptation:</strong> Understanding how your voice changes for different audiences</li>
-                        </ul>
-                    </div>
+                <div class="info-card mb-4">
+                    <h5><i class="fas fa-question-circle me-2"></i> What to Expect</h5>
+                    <p>The brand interview will cover the following areas:</p>
+                    <ul>
+                        <li><strong>Brand Personality:</strong> Defining your brand's character traits</li>
+                        <li><strong>Formality Level:</strong> Determining how formal or casual your brand voice should be</li>
+                        <li><strong>Emotional Tone:</strong> Identifying the emotions your brand should convey</li>
+                        <li><strong>Vocabulary Preferences:</strong> Establishing preferred and restricted terminology</li>
+                        <li><strong>Communication Style:</strong> Defining your approach to storytelling and sentence structure</li>
+                        <li><strong>Audience Adaptation:</strong> Understanding how your voice changes for different audiences</li>
+                    </ul>
                 </div>
 
                 <!-- Brand Interview Form -->
@@ -39,7 +41,7 @@
 
                     <!-- Personality Section -->
                     <div class="card mb-4" id="personality-section">
-                        <div class="card-header bg-primary text-white">
+                        <div class="card-header card-header-feature">
                             <h5 class="mb-0">1. Brand Personality</h5>
                         </div>
                         <div class="card-body">
@@ -116,7 +118,7 @@
 
                     <!-- Emotional Tone Section -->
                     <div class="card mb-4" id="emotional-section" style="display: none;">
-                        <div class="card-header bg-primary text-white">
+                        <div class="card-header card-header-feature">
                             <h5 class="mb-0">2. Emotional Tone</h5>
                         </div>
                         <div class="card-body">
@@ -184,7 +186,7 @@
 
                     <!-- Formality Section -->
                     <div class="card mb-4" id="formality-section" style="display: none;">
-                        <div class="card-header bg-primary text-white">
+                        <div class="card-header card-header-feature">
                             <h5 class="mb-0">3. Formality</h5>
                         </div>
                         <div class="card-body">
@@ -235,7 +237,7 @@
 
                     <!-- Communication Style Section -->
                     <div class="card mb-4" id="communication-section" style="display: none;">
-                        <div class="card-header bg-primary text-white">
+                        <div class="card-header card-header-feature">
                             <h5 class="mb-0">4. Communication Style</h5>
                         </div>
                         <div class="card-body">
@@ -287,7 +289,7 @@
 
                     <!-- Review & Submit Section -->
                     <div class="card mb-4" id="submit-section" style="display: none;">
-                        <div class="card-header bg-primary text-white">
+                        <div class="card-header card-header-feature">
                             <h5 class="mb-0">5. Review & Submit</h5>
                         </div>
                         <div class="card-body">
@@ -314,36 +316,26 @@
     </div>
 </div>
 
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-light">
-                <h3 class="h5 mb-0">Alternative Methods</h3>
+<div class="feature-section mt-5">
+    <h2 class="h4 mb-3">Alternative Methods</h2>
+    <p>While the brand interview feature is being developed, you can use these alternative methods to analyze your brand voice:</p>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="feature-card h-100">
+                <i class="fas fa-file-upload feature-card-icon"></i>
+                <h5 class="card-title">Document Upload</h5>
+                <p class="card-text">Upload your existing brand documents to extract key brand voice elements.</p>
+                <a href="{{ url_for('document_upload') }}" class="btn btn-primary">Go to Document Upload</a>
             </div>
-            <div class="card-body">
-                <p>While the brand interview feature is being developed, you can use these alternative methods to analyze your brand voice:</p>
+        </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h5 class="card-title"><i class="fas fa-file-upload text-primary me-2"></i> Document Upload</h5>
-                                <p class="card-text">Upload your existing brand documents to extract key brand voice elements.</p>
-                                <a href="{{ url_for('document_upload') }}" class="btn btn-primary">Go to Document Upload</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h5 class="card-title"><i class="fas fa-globe text-primary me-2"></i> Web Scraper</h5>
-                                <p class="card-text">Analyze your website content to identify brand voice patterns.</p>
-                                <a href="{{ url_for('web_scraper') }}" class="btn btn-primary">Go to Web Scraper</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="col-md-6 mb-3">
+            <div class="feature-card h-100">
+                <i class="fas fa-globe feature-card-icon"></i>
+                <h5 class="card-title">Web Scraper</h5>
+                <p class="card-text">Analyze your website content to identify brand voice patterns.</p>
+                <a href="{{ url_for('web_scraper') }}" class="btn btn-primary">Go to Web Scraper</a>
             </div>
         </div>
     </div>
