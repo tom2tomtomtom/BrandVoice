@@ -6,9 +6,9 @@ The Brand Voice Codifier is a tool designed to analyze, capture, and codify a cl
 ## Features
 
 ### 1. Multiple Input Methods
-- **Document Upload & Analysis**: Upload brand documents (PDF, TXT) to extract voice parameters
-- **Conversational Brand Interview**: Answer questions to define your brand voice
-- **Web Presence Scraper**: Analyze website content for voice patterns
+- **Document Upload & Analysis**: Upload brand documents (PDF, TXT) to extract voice parameters using intelligent AI analysis
+- **Conversational Brand Interview**: Answer questions to define your brand voice with AI-enhanced interpretation
+- **Web Presence Scraper**: Analyze website content for voice patterns using intelligent AI analysis
 
 ### 2. Parameter Extraction & Classification
 - Brand Personality Profile
@@ -125,16 +125,18 @@ Brand Voice Codifier/
 - Comprehensive brand voice documentation
 - Visual elements for easy understanding
 
-### API Integration
-- Connect with OpenAI, Anthropic, Cohere, or custom systems
-- Synchronize brand voice parameters
+### Intelligent Text Analysis with API Integration
+- Advanced AI-powered analysis using OpenAI, Anthropic, Cohere, or custom systems
+- More accurate and nuanced brand voice parameter extraction
+- Deeper insights into personality traits, emotional tone, and communication style
+- Automatic fallback to basic analysis if API is unavailable
 - Secure API key management
-- Status tracking
+- Connection status monitoring
 
 ## Future Enhancements
 
 - PDF export functionality
-- More sophisticated text analysis algorithms
+- Enhanced AI model integration and customization
 - Additional input methods (e.g., competitor analysis)
 - Enhanced visualization options
 - User accounts and saved brand profiles

@@ -37,7 +37,9 @@
 
                 <!-- Brand Interview Form -->
                 <form action="{{ url_for('brand_interview') }}" method="post" id="brand-interview-form">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    {% if csrf_token is defined %}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {% endif %}
 
                     <!-- Personality Section -->
                     <div class="card mb-4" id="personality-section">

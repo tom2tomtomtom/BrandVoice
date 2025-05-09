@@ -24,6 +24,13 @@ var/
 venv/
 ENV/
 
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
 # Flask
 instance/
 .webassets-cache

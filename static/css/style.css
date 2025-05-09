@@ -274,7 +274,21 @@ input[type=range]::-webkit-slider-thumb {
 /* Multiselect Styling */
 select[multiple] {
     height: auto;
+    min-height: 150px;
+}
+
+/* Interview Form Styling */
+#brand-interview-form textarea {
     min-height: 100px;
+}
+
+#brand-interview-form .form-control {
+    min-height: 45px;
+}
+
+#brand-interview-form select[multiple] option {
+    padding: 8px;
+    margin-bottom: 2px;
 }
 
 /* Placeholder for Chart.js gauge chart */

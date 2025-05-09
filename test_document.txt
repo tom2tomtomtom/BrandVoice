@@ -1,0 +1,23 @@
+This is a test document for the Brand Voice Codifier.
+
+Our brand is innovative, trustworthy, and sophisticated.
+We believe in providing cutting-edge solutions that our customers can rely on.
+Our approach is elegant and refined, appealing to discerning clients.
+
+We communicate with optimism and passion, always focusing on the positive outcomes
+our solutions can provide. We are enthusiastic about our work and it shows in how
+we talk about our products and services.
+
+We maintain a moderate level of formality in our communications, being professional
+without being stuffy or overly formal. We want to be approachable while still being
+taken seriously.
+
+Our vocabulary is precise and clear, avoiding jargon when possible but not shying away
+from technical terms when they are the most accurate way to describe something.
+
+We prefer a balanced approach to storytelling, using narratives when they help illustrate
+a point but being direct when clarity is most important. Our sentences are of moderate
+length and complexity, making our content accessible without being simplistic.
+
+This test document should help the Brand Voice Codifier analyze and extract our brand
+voice parameters accurately.

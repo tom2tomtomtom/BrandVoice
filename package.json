@@ -1,0 +1,20 @@
+{
+  "name": "brand-voice-codifier",
+  "version": "1.0.0",
+  "description": "A tool to analyze, capture, and codify brand tone of voice",
+  "main": "index.js",
+  "scripts": {
+    "server": "python main.py",
+    "start": "python main.py",
+    "dev": "python main.py",
+    "prod": "./start.sh"
+  },
+  "keywords": [
+    "brand",
+    "voice",
+    "analysis",
+    "AI"
+  ],
+  "author": "",
+  "license": "MIT"
+}

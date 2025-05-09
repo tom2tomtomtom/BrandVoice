@@ -40,8 +40,9 @@ def nl2br_filter(s):
     from markupsafe import Markup
     return Markup(s.replace('\n', '<br>'))
 
-# Initialize CSRF protection
-csrf = CSRFProtect(app)
+# Initialize CSRF protection but disable it for testing
+# csrf = CSRFProtect(app)
+app.config['WTF_CSRF_ENABLED'] = False
 
 # Personality traits dictionary
 PERSONALITY_TRAITS = {
@@ -219,91 +220,44 @@ def update_brand_parameters(analysis_results):
     session.modified = True
 
 def generate_example_copy(parameters):
-    """Generate example meta ad headlines and taglines based on the brand voice parameters"""
+    """Generate example copy based on the brand voice parameters and actual document content"""
 
-    # Extract key parameters
+    # Check if we have the original API response with key phrases
+    if "original_api_response" in parameters:
+        api_response = parameters["original_api_response"]
+
+        # Use key phrases from the API response if available
+        if "communication_style" in api_response and "key_phrases" in api_response["communication_style"]:
+            key_phrases = api_response["communication_style"]["key_phrases"]
+            if key_phrases and len(key_phrases) > 0:
+                # Format the output using actual phrases from the document
+                result = "Examples from your brand document:\n\n"
+                for i, phrase in enumerate(key_phrases[:3], 1):
+                    result += f"{i}. \"{phrase}\"\n"
+
+                # Add preferred terms if available
+                if "vocabulary" in api_response and "preferred_terms" in api_response["vocabulary"]:
+                    preferred_terms = api_response["vocabulary"]["preferred_terms"]
+                    if preferred_terms and len(preferred_terms) > 0:
+                        result += "\nPreferred terms from your document:\n"
+                        terms_list = ", ".join([f"\"{term}\"" for term in preferred_terms[:5]])
+                        result += terms_list
+
+                return result
+
+    # Extract key parameters for fallback
     primary_traits = parameters["personality"]["primary_traits"]
     primary_emotions = parameters["emotional_tone"]["primary_emotions"]
-    formality_level = parameters["formality"]["level"]
-    storytelling_pref = parameters["communication_style"]["storytelling_preference"]
 
-    # Generate examples based on parameters
+    # Simple fallback if no API response is available
     if not primary_traits or not primary_emotions:
-        return "Complete at least one input method to generate example ad copy."
+        return "Complete at least one input method to generate example copy based on your document."
 
-    # Base examples for different combinations - Meta ad headlines and taglines
-    headlines = {
-        # Innovative examples
-        ("innovative", "optimistic", "high"): "Revolutionize Your Industry with Cutting-Edge Solutions | Transform How You Do Business",
-        ("innovative", "optimistic", "low"): "Game-Changing Tech That Actually Works! | Level Up Your Business Today",
-        ("innovative", "serious", "high"): "Advanced Solutions for Complex Business Challenges | Strategic Innovation for Forward-Thinking Organizations",
-        ("innovative", "serious", "low"): "Smart Tech for Tough Problems | Get Results Fast",
+    # Create a simple fallback message
+    traits_str = ", ".join(primary_traits)
+    emotions_str = ", ".join(primary_emotions)
 
-        # Trustworthy examples
-        ("trustworthy", "optimistic", "high"): "Reliable Solutions You Can Count On | Building Trust Through Consistent Excellence",
-        ("trustworthy", "optimistic", "low"): "We've Got Your Back! | No Surprises, Just Results",
-        ("trustworthy", "serious", "high"): "Dependable Performance in Critical Situations | Trusted by Industry Leaders Since 2005",
-        ("trustworthy", "serious", "low"): "Rock-Solid Reliability | We Keep Our Promises",
-
-        # Playful examples
-        ("playful", "optimistic", "high"): "Delight in the Unexpected | Bringing Joy to Business Innovation",
-        ("playful", "optimistic", "low"): "Business Can Be Fun! | Smile While You Crush Your Goals",
-
-        # Sophisticated examples
-        ("sophisticated", "optimistic", "high"): "Elevate Your Business Experience | Refined Solutions for Discerning Organizations",
-        ("sophisticated", "serious", "high"): "Premium Solutions for Elite Performance | Where Excellence Meets Sophistication",
-
-        # Friendly examples
-        ("friendly", "optimistic", "high"): "Your Partner in Business Growth | We're In This Together",
-        ("friendly", "optimistic", "low"): "Hey There! Let's Grow Together | Business Made Easy",
-
-        # Authoritative examples
-        ("authoritative", "serious", "high"): "Industry-Leading Expertise for Optimal Results | The Definitive Solution for Business Excellence",
-        ("authoritative", "optimistic", "high"): "Master Your Business Challenges | Expert Solutions That Drive Success",
-
-        # Bold examples
-        ("bold", "optimistic", "high"): "Dare to Transform Your Business | Breakthrough Solutions for Fearless Leaders",
-        ("bold", "optimistic", "low"): "Go Big or Go Home! | Crush Your Competition Today",
-
-        # Empathetic examples
-        ("empathetic", "reassuring", "high"): "Understanding Your Business Challenges | Solutions That Address Your Unique Needs",
-        ("empathetic", "optimistic", "low"): "We Get It. Business is Hard. | Let's Make It Easier Together",
-
-        # Default example
-        ("default", "default", "default"): "Effective Solutions for Your Business | Achieve Your Goals with Our Support"
-    }
-
-    # Determine which example to use
-    primary_trait = primary_traits[0] if primary_traits else "default"
-    primary_emotion = primary_emotions[0] if primary_emotions else "default"
-    formality = "high" if formality_level > 5 else "low"
-
-    # Get the example
-    example_key = (primary_trait, primary_emotion, formality)
-    if example_key in headlines:
-        headline = headlines[example_key]
-    else:
-        # Try with just the primary trait and formality
-        example_key = (primary_trait, "default", formality)
-        if example_key in headlines:
-            headline = headlines[example_key]
-        else:
-            # Fall back to default
-            headline = headlines[("default", "default", "default")]
-
-    # Split into headline and tagline
-    parts = headline.split(" | ")
-    headline_part = parts[0]
-    tagline_part = parts[1] if len(parts) > 1 else ""
-
-    # Format the output
-    result = f"Headline: {headline_part}\nTagline: {tagline_part}"
-
-    # Add a note about storytelling preference
-    if storytelling_pref > 7:
-        result += "\n\nNote: Your high storytelling preference suggests using narrative elements in longer ad copy."
-
-    return result
+    return f"Based on your document analysis, your brand voice is {traits_str} with a {emotions_str} tone.\n\nFor specific examples, please upload a document with clear brand voice guidelines."
 
 # Routes
 @app.route('/')
@@ -352,7 +306,24 @@ def document_upload():
                         with open(file_path, 'rb') as f:
                             pdf_reader = PyPDF2.PdfReader(f)
                             for page in pdf_reader.pages:
-                                text += page.extract_text()
+                                page_text = page.extract_text()
+                                if page_text:
+                                    text += page_text + "\n\n"  # Add spacing between pages
+
+                        # Print the extracted text for debugging
+                        print(f"Extracted PDF text (length: {len(text)} chars)")
+                        print("First 500 chars:")
+                        print(text[:500])
+                        print("Last 500 chars:")
+                        print(text[-500:] if len(text) > 500 else text)
+
+                        # Save the extracted text to a debug file for inspection
+                        try:
+                            with open('debug_extracted_text.txt', 'w', encoding='utf-8') as f:
+                                f.write(text)
+                            print("Saved extracted text to debug_extracted_text.txt for inspection")
+                        except Exception as e:
+                            print(f"Error saving debug file: {str(e)}")
                     except Exception as e:
                         flash(f'Error reading PDF file: {str(e)}', 'danger')
                         print(f"PDF extraction error: {str(e)}")
@@ -360,15 +331,51 @@ def document_upload():
                     try:
                         with open(file_path, 'r', encoding='utf-8') as f:
                             text = f.read()
+                            # Print the extracted text for debugging
+                            print(f"Extracted TXT text (length: {len(text)} chars)")
+                            print("First 500 chars:")
+                            print(text[:500])
+                            print("Last 500 chars:")
+                            print(text[-500:] if len(text) > 500 else text)
+
+                            # Save the extracted text to a debug file for inspection
+                            try:
+                                with open('debug_extracted_text.txt', 'w', encoding='utf-8') as f:
+                                    f.write(text)
+                                print("Saved extracted text to debug_extracted_text.txt for inspection")
+                            except Exception as e:
+                                print(f"Error saving debug file: {str(e)}")
                     except UnicodeDecodeError:
                         # Try with different encoding if UTF-8 fails
                         with open(file_path, 'r', encoding='latin-1') as f:
                             text = f.read()
+                            # Print the extracted text for debugging
+                            print(f"Extracted TXT text with latin-1 encoding (length: {len(text)} chars)")
+                            print("First 500 chars:")
+                            print(text[:500])
+                            print("Last 500 chars:")
+                            print(text[-500:] if len(text) > 500 else text)
+
+                            # Save the extracted text to a debug file for inspection
+                            try:
+                                with open('debug_extracted_text.txt', 'w', encoding='utf-8') as f:
+                                    f.write(text)
+                                print("Saved extracted text to debug_extracted_text.txt for inspection")
+                            except Exception as e:
+                                print(f"Error saving debug file: {str(e)}")
                     except Exception as e:
                         flash(f'Error reading text file: {str(e)}', 'danger')
                         print(f"Text file reading error: {str(e)}")
                 else:
                     flash('Unsupported file format. Please upload a PDF or TXT file.', 'danger')
+
+                # Save the extracted text to a debug file for inspection
+                try:
+                    with open('debug_extracted_text.txt', 'w', encoding='utf-8') as f:
+                        f.write(text)
+                    print("Saved extracted text to debug_extracted_text.txt for inspection")
+                except Exception as e:
+                    print(f"Error saving debug file: {str(e)}")
 
                 # Remove the file after processing
                 try:
@@ -380,10 +387,38 @@ def document_upload():
                     try:
                         # Analyze the text
                         print(f"Analyzing text of length: {len(text)}")
-                        analysis_results = analyze_text(text)
 
-                        # Update brand parameters
-                        update_brand_parameters(analysis_results)
+                        # Check if API key is set
+                        api_key = session['api_settings'].get('api_key', '')
+
+                        # Always set these values
+                        session['api_settings']['api_provider'] = 'openai'
+                        session['api_settings']['integration_enabled'] = True
+                        session.modified = True
+
+                        if not api_key:
+                            flash('API key is required for document analysis. Please enter your OpenAI API key.', 'danger')
+                            return redirect(url_for('api_settings'))
+
+                        # Import the text analyzer with API support
+                        from app.utils.text_analyzer import analyze_text as api_analyze_text
+
+                        try:
+                            print(f"Using {session['api_settings']['api_provider']} API for text analysis")
+                            analysis_results = api_analyze_text(text)
+                        except Exception as e:
+                            flash(f'API analysis failed: {str(e)}', 'danger')
+                            return redirect(url_for('api_settings'))
+
+                        # First update the parameters using the text analyzer function
+                        from app.utils.text_analyzer import update_brand_parameters as update_params_from_analysis
+                        from app.utils.session_manager import get_brand_parameters
+                        brand_parameters = get_brand_parameters()
+                        updated_parameters = update_params_from_analysis(brand_parameters, analysis_results)
+
+                        # Then use the session manager function to merge with method name
+                        from app.utils.session_manager import update_brand_parameters as update_session_parameters
+                        update_session_parameters(updated_parameters, method_name="document_upload")
 
                         # Mark document upload as used
                         session['input_methods']['document_upload']['used'] = True
@@ -494,16 +529,46 @@ def brand_interview():
 
     return render_template('brand_interview.html')
 
+@app.route('/simple-form')
+def simple_form():
+    return render_template('simple_form.html')
+
 @app.route('/web-scraper', methods=['GET', 'POST'])
 def web_scraper():
-    initialize_session()
+    print("\n\n==== WEB SCRAPER ROUTE CALLED ====")
+    print(f"Request method: {request.method}")
+
+    try:
+        initialize_session()
+        print("Session initialized")
+    except Exception as e:
+        print(f"Error initializing session: {str(e)}")
 
     if request.method == 'POST':
-        website_url = request.form.get('url', '').strip()
+        try:
+            # Print all form data for debugging
+            print("Form data received in main.py:")
+            for key, value in request.form.items():
+                print(f"  {key}: {value}")
 
-        if not website_url:
-            flash('Please enter a website URL', 'danger')
-            return redirect(request.url)
+            # Get the website URL from the form
+            website_url = request.form.get('website_url', '')
+
+            # Print raw value
+            print(f"Raw website URL value: '{website_url}'")
+
+            # Strip whitespace
+            website_url = website_url.strip()
+            print(f"After stripping whitespace: '{website_url}'")
+
+            # Check if URL is empty
+            if not website_url:
+                print("URL is empty after stripping whitespace")
+                flash('Please enter a website URL', 'danger')
+                return redirect(request.url)
+        except Exception as e:
+            print(f"Error processing form data: {str(e)}")
+            return f"Error processing form: {str(e)}"
 
         # Add http:// if not present
         if not website_url.startswith(('http://', 'https://')):
@@ -529,10 +594,29 @@ def web_scraper():
 
             if text:
                 # Analyze the text
-                analysis_results = analyze_text(text)
+                # Check if API integration is enabled
+                if not session['api_settings'].get('integration_enabled', False) or not session['api_settings'].get('api_key'):
+                    flash('API integration is required for text analysis. Please configure API settings.', 'danger')
+                    return redirect(url_for('api_settings'))
 
-                # Update brand parameters
-                update_brand_parameters(analysis_results)
+                # Import the text analyzer with API support
+                from app.utils.text_analyzer import analyze_text as api_analyze_text
+
+                try:
+                    print(f"Using {session['api_settings']['api_provider']} API for web content analysis")
+                    analysis_results = api_analyze_text(text)
+                except Exception as e:
+                    flash(f'API analysis failed: {str(e)}', 'danger')
+                    return redirect(url_for('api_settings'))
+
+                # First update the parameters using the text analyzer function
+                from app.utils.text_analyzer import update_brand_parameters as update_params_from_analysis
+                from app.utils.session_manager import get_brand_parameters, update_brand_parameters as update_session_parameters
+                brand_parameters = get_brand_parameters()
+                updated_parameters = update_params_from_analysis(brand_parameters, analysis_results)
+
+                # Then use the session manager function to merge with method name
+                update_session_parameters(updated_parameters, method_name="web_scraper")
 
                 # Mark web scraper as used
                 session['input_methods']['web_scraper']['used'] = True
@@ -557,11 +641,93 @@ def results():
         flash('You need to complete at least one input method first.', 'warning')
         return redirect(url_for('home'))
 
+    # Make sure parameters are merged from all input methods
+    from app.utils.session_manager import merge_brand_parameters
+    merge_brand_parameters()
+
+    # Get parameter sources for the template
+    parameter_sources = session.get('parameter_sources', {})
+
+    # Print the parameters being passed to the template
+    print("\nParameters being passed to the results template:")
+    print(f"Personality primary traits: {session['brand_parameters']['personality']['primary_traits']}")
+    print(f"Personality secondary traits: {session['brand_parameters']['personality']['secondary_traits']}")
+    print(f"Emotional tone primary: {session['brand_parameters']['emotional_tone']['primary_emotions']}")
+    print(f"Emotional tone secondary: {session['brand_parameters']['emotional_tone']['secondary_emotions']}")
+    print(f"Formality level: {session['brand_parameters']['formality']['level']}")
+    print(f"Communication style - storytelling: {session['brand_parameters']['communication_style']['storytelling_preference']}")
+    print(f"Communication style - length: {session['brand_parameters']['communication_style']['sentence_structure']['length_preference']}")
+    print(f"Communication style - complexity: {session['brand_parameters']['communication_style']['sentence_structure']['complexity_preference']}")
+
+    # Generate brand voice summary
+    from app.utils.text_analyzer import generate_brand_voice_summary
+
+    # Get analysis results from the most recently used method
+    analysis_results = None
+    for method, data in session['input_methods'].items():
+        if data.get('used', False) and 'data' in data:
+            analysis_results = data['data']
+            break
+
+    # Generate the brand voice summary
+    brand_voice_summary = generate_brand_voice_summary(
+        session['brand_parameters'],
+        analysis_results=analysis_results,
+        input_methods=session['input_methods']
+    )
+
+    # Store the summary in the session for later use
+    session['brand_voice_summary'] = brand_voice_summary
+    session.modified = True
+
+    # Check if the summary has been approved
+    summary_approved = session.get('summary_approved', False)
+
     return render_template('results.html',
                           brand_parameters=session['brand_parameters'],
                           input_methods=session['input_methods'],
                           api_settings=session['api_settings'],
-                          example_copy=generate_example_copy(session['brand_parameters']))
+                          parameter_sources=parameter_sources,
+                          example_copy=generate_example_copy(session['brand_parameters']),
+                          brand_voice_summary=brand_voice_summary,
+                          summary_approved=summary_approved)
+
+@app.route('/approve-summary', methods=['POST'])
+def approve_summary():
+    """Handle approval or editing of the brand voice summary"""
+    initialize_session()
+
+    if request.method == 'POST':
+        action = request.form.get('action', '')
+
+        if action == 'approve':
+            # Mark the summary as approved
+            session['summary_approved'] = True
+            flash('Brand voice summary approved!', 'success')
+
+        elif action == 'edit':
+            # Get the edited summary values
+            tone_description = request.form.get('tone_description', '')
+            example_phrases = request.form.getlist('example_phrases')
+            frequently_used_words = request.form.getlist('frequently_used_words')
+            words_to_avoid = request.form.getlist('words_to_avoid')
+
+            # Update the summary in the session
+            if 'brand_voice_summary' not in session:
+                session['brand_voice_summary'] = {}
+
+            session['brand_voice_summary']['tone_description'] = tone_description
+            session['brand_voice_summary']['example_phrases'] = example_phrases
+            session['brand_voice_summary']['frequently_used_words'] = frequently_used_words
+            session['brand_voice_summary']['words_to_avoid'] = words_to_avoid
+
+            # Mark as approved since it's been edited
+            session['summary_approved'] = True
+            flash('Brand voice summary updated and approved!', 'success')
+
+        session.modified = True
+
+    return redirect(url_for('results'))
 
 @app.route('/export')
 def export():
@@ -578,9 +744,16 @@ def export():
     file_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     css_version = datetime.now().strftime("%Y%m%d%H%M%S")  # Add a version for cache busting
 
+    # Get the brand voice summary
+    brand_voice_summary = session.get('brand_voice_summary', {})
+
     if export_format == 'json':
-        # Generate JSON
-        response = jsonify(session['brand_parameters'])
+        # Generate JSON with brand parameters and summary
+        export_data = {
+            'brand_parameters': session['brand_parameters'],
+            'brand_voice_summary': brand_voice_summary
+        }
+        response = jsonify(export_data)
         response.headers.set('Content-Disposition', f'attachment; filename=brand_voice_parameters_{file_timestamp}.json')
         response.headers.set('Content-Type', 'application/json')
         return response
@@ -596,6 +769,7 @@ def export():
         response = make_response(render_template('report.html',
                               brand_parameters=session['brand_parameters'],
                               example_copy=generate_example_copy(session['brand_parameters']),
+                              brand_voice_summary=brand_voice_summary,
                               timestamp=timestamp,
                               css_version=css_version,
                               current_year=datetime.now().year))
@@ -612,21 +786,30 @@ def api_settings():
     initialize_session()
 
     if request.method == 'POST':
-        # Update API settings
-        session['api_settings']['api_key'] = request.form.get('api_key', '')
-        session['api_settings']['api_provider'] = request.form.get('api_provider', '')
-        session['api_settings']['integration_enabled'] = 'integration_enabled' in request.form
+        # Get API key from form
+        api_key = request.form.get('api_key', '')
+
+        # Always use OpenAI and enable integration
+        api_provider = 'openai'
+        integration_enabled = True
+
+        # Update session
+        session['api_settings']['api_key'] = api_key
+        session['api_settings']['api_provider'] = api_provider
+        session['api_settings']['integration_enabled'] = integration_enabled
         session.modified = True
 
-        # If integration is enabled and we have an API key, try to sync
-        if session['api_settings']['integration_enabled'] and session['api_settings']['api_key']:
+        print(f"API key saved: {'*' * len(api_key) if api_key else 'None'}")
+
+        # Try to sync with API if we have a key
+        if api_key:
             success, message = sync_with_api()
             if success:
-                flash('API settings saved and synchronized successfully!', 'success')
+                flash('API key saved and verified successfully!', 'success')
             else:
-                flash(f'API settings saved but synchronization failed: {message}', 'warning')
+                flash(f'API key saved but verification failed: {message}', 'warning')
         else:
-            flash('API settings saved successfully!', 'success')
+            flash('API settings cleared.', 'info')
 
         return redirect(url_for('api_settings'))
 
@@ -653,80 +836,38 @@ def api_sync():
         return jsonify({'success': False, 'error': message})
 
 def sync_with_api():
-    """Sync brand parameters with the selected API provider"""
+    """Verify API connection for intelligent text analysis"""
     try:
-        api_provider = session['api_settings']['api_provider']
         api_key = session['api_settings']['api_key']
 
-        if not api_provider or not api_key:
-            return False, "API provider or API key is missing"
+        if not api_key:
+            return False, "API key is missing. Please enter your API key."
 
-        # Prepare data for API
-        data = {
-            'brand_parameters': session['brand_parameters'],
-            'timestamp': datetime.now().isoformat()
-        }
+        # Import the API client
+        from app.utils.api_client import APIClient
 
-        # Different API providers have different endpoints and authentication methods
-        if api_provider == 'openai':
-            # OpenAI API integration
-            headers = {
-                'Authorization': f'Bearer {api_key}',
-                'Content-Type': 'application/json'
-            }
-            # In a real implementation, you would make an actual API call here
-            # response = requests.post('https://api.openai.com/v1/brand-voice', json=data, headers=headers)
-            # For demo purposes, we'll simulate a successful response
-            success = True
+        # Create a test message to verify API connectivity
+        test_message = "This is a test message to verify API connectivity."
 
-        elif api_provider == 'anthropic':
-            # Anthropic API integration
-            headers = {
-                'x-api-key': api_key,
-                'Content-Type': 'application/json'
-            }
-            # In a real implementation, you would make an actual API call here
-            # response = requests.post('https://api.anthropic.com/v1/brand-voice', json=data, headers=headers)
-            # For demo purposes, we'll simulate a successful response
-            success = True
+        # Create API client and test connection (always use OpenAI)
+        api_client = APIClient('openai', api_key)
 
-        elif api_provider == 'cohere':
-            # Cohere API integration
-            headers = {
-                'Authorization': f'Bearer {api_key}',
-                'Content-Type': 'application/json'
-            }
-            # In a real implementation, you would make an actual API call here
-            # response = requests.post('https://api.cohere.ai/v1/brand-voice', json=data, headers=headers)
-            # For demo purposes, we'll simulate a successful response
-            success = True
-
-        elif api_provider == 'custom':
-            # Custom API integration
-            headers = {
-                'Authorization': f'Bearer {api_key}',
-                'Content-Type': 'application/json'
-            }
-            # In a real implementation, you would make an actual API call here
-            # response = requests.post('https://your-custom-api.com/brand-voice', json=data, headers=headers)
-            # For demo purposes, we'll simulate a successful response
-            success = True
-
-        else:
-            return False, f"Unsupported API provider: {api_provider}"
+        # Test the API with a small sample text
+        success, result = api_client.analyze_text(test_message)
 
         # Update last sync time
         if success:
             session['api_settings']['last_sync_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             session.modified = True
-            return True, "Synchronization successful"
+            return True, "API connection verified successfully."
         else:
-            return False, "API request failed"
+            error_message = result.get('error', 'Unknown error')
+            return False, f"API connection test failed: {error_message}"
 
     except Exception as e:
-        return False, str(e)
+        return False, f"API connection error: {str(e)}"
 
 if __name__ == '__main__':
     # Use environment variable for port if available (for Render compatibility)
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    port = int(os.environ.get('PORT', 5001))  # Changed default port to 5001
+    app.run(host='0.0.0.0', port=port, debug=True)

@@ -42,7 +42,9 @@
                 </div>
 
                 <form action="{{ url_for('document_upload') }}" method="post" enctype="multipart/form-data" class="mt-4">
+                    {% if csrf_token is defined %}
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    {% endif %}
 
                     <div class="form-group">
                         <label for="document" class="form-label">Upload Document</label>

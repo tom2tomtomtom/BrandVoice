@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Connection</title>
+    <script>
+        function testConnection() {
+            const url = document.getElementById('url').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerHTML = 'Testing connection to ' + url + '...';
+            
+            fetch(url)
+                .then(response => {
+                    if (response.ok) {
+                        resultDiv.innerHTML = 'Connection successful! Status: ' + response.status;
+                        return response.text();
+                    }
+                    throw new Error('Connection failed. Status: ' + response.status);
+                })
+                .then(html => {
+                    const preview = document.getElementById('preview');
+                    preview.innerHTML = '<h3>Preview of response:</h3><pre>' + html.substring(0, 500) + '...</pre>';
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = 'Error: ' + error.message;
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Test Connection to Server</h1>
+    <div>
+        <input type="text" id="url" value="http://127.0.0.1:5001" style="width: 300px;">
+        <button onclick="testConnection()">Test Connection</button>
+    </div>
+    <div id="result" style="margin-top: 20px; padding: 10px; background-color: #f0f0f0;"></div>
+    <div id="preview" style="margin-top: 20px;"></div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+{
+  "personality_traits": {
+    "successful": 9,
+    "grounded": 10,
+    "honest": 10,
+    "witty": 8,
+    "smart": 9,
+    "clever": 8,
+    "solution-led": 7
+  },
+  "emotional_tone": {
+    "clear": 10,
+    "focused": 9,
+    "spicy": 8,
+    "respectful": 9
+  },
+  "formality": {
+    "level": 6
+  },
+  "vocabulary": {
+    "preferred_terms": [
+      "precision-engineered",
+      "sculpt/sculptural/sculpted/sculpting",
+      "performance/high-performance",
+      "technical/technology/tech",
+      "pioneering",
+      "innovation/innovative/innovator",
+      "transparent/transparency",
+      "thrive",
+      "challenge",
+      "enduring",
+      "made to last",
+      "high-tech",
+      "community",
+      "impactful/impact",
+      "cutting-edge",
+      "fresh"
+    ],
+    "avoided_terms": [
+      "luxury/luxe",
+      "join the club/join the team",
+      "monday blues/thursday throwback/tgif",
+      "amazing",
+      "wow/wow-factor",
+      "stunning",
+      "we\u2019ve got you covered",
+      "must-have",
+      "trendy/trends/trend-led/trending",
+      "showstopping",
+      "savvy"
+    ]
+  },
+  "communication_style": {
+    "key_phrases": [
+      "We are LNDR and we\u2019re here to cut through the BLLSHT.",
+      "Less isn\u2019t more (it\u2019s less)",
+      "Tell us what you really think",
+      "Your butt deserves the best",
+      "Forget flowers, get naked"
+    ],
+    "sentence_structure": {
+      "length_preference": 7,
+      "complexity_preference": 6
+    },
+    "rich_descriptions": [
+      "We have integrity. Everything we say has a purpose. We\u2019re clear and honest with our audience - they\u2019re adults, they\u2019re smart, they can handle the truth.",
+      "Just a little bit sensual. Imagine you\u2019re two negronis in and describing how your favourite leggings feel. We\u2019re all about how our products make you feel, and we\u2019re not afraid to get a little spicy when we need to.",
+      "We use big, vivid, specific and descriptive language to convey feeling.",
+      "Our language is clean, precise, specific and evocative.",
+      "When you\u2019re talking to our community on social, it\u2019s like you\u2019re sitting across the table from them at a bar or a pub. You\u2019re direct, warm, specific and human.",
+      "Responding to compliments: We play back the customer's language to them as a playful compliment, while expressing our gratitude. Keep your language human - you\u2019d never thank a mate for their feedback."
+    ]
+  }
+}

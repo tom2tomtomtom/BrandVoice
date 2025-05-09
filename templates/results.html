@@ -10,7 +10,41 @@
                 <h2 class="h4 mb-0"><i class="fas fa-chart-bar me-2"></i> Brand Voice Parameters</h2>
             </div>
             <div class="card-body">
-                <p class="lead">Here are the brand voice parameters we've identified based on your input.</p>
+                <p class="lead">Here are the brand voice parameters we've identified based on your input. As you complete more input methods, your brand voice profile becomes more nuanced and comprehensive.</p>
+
+                <!-- Debug information -->
+                <div class="card bg-dark text-white mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Debug Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>Personality Traits:</h6>
+                        <p>Primary: {{ brand_parameters.personality.primary_traits|join(', ') }}</p>
+                        <p>Secondary: {{ brand_parameters.personality.secondary_traits|join(', ') }}</p>
+
+                        <h6>Emotional Tone:</h6>
+                        <p>Primary: {{ brand_parameters.emotional_tone.primary_emotions|join(', ') }}</p>
+                        <p>Secondary: {{ brand_parameters.emotional_tone.secondary_emotions|join(', ') }}</p>
+
+                        <h6>Communication Style:</h6>
+                        <p>Storytelling: {{ brand_parameters.communication_style.storytelling_preference }}</p>
+                        <p>Length: {{ brand_parameters.communication_style.sentence_structure.length_preference }}</p>
+                        <p>Complexity: {{ brand_parameters.communication_style.sentence_structure.complexity_preference }}</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-info mb-4">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-info-circle fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="alert-heading">Combined Analysis</h5>
+                            <p>Your brand voice profile is built from all the input methods you've completed. Each method adds nuance to the overall analysis, creating a more comprehensive understanding of your brand voice.</p>
+                            <p class="mb-0">Look for the source indicators <i class="fas fa-file-alt" title="Document Upload"></i> <i class="fas fa-comments" title="Brand Interview"></i> <i class="fas fa-globe" title="Web Scraper"></i> next to each parameter to see which input methods contributed to that insight.</p>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="row mb-4">
                     <div class="col-md-4 mb-3">
@@ -21,14 +55,29 @@
                                     <li class="list-group-item bg-card">
                                         <i class="fas {% if input_methods.document_upload.used %}fa-check-circle{% else %}fa-times-circle text-muted{% endif %} me-2"></i>
                                         <span class="text-primary">Document Upload</span>
+                                        {% if input_methods.document_upload.used %}
+                                            <span class="badge bg-success ms-2">Completed</span>
+                                        {% else %}
+                                            <a href="{{ url_for('document_upload') }}" class="badge bg-secondary ms-2">Add</a>
+                                        {% endif %}
                                     </li>
                                     <li class="list-group-item bg-card">
                                         <i class="fas {% if input_methods.brand_interview.used %}fa-check-circle{% else %}fa-times-circle text-muted{% endif %} me-2"></i>
                                         <span class="text-primary">Brand Interview</span>
+                                        {% if input_methods.brand_interview.used %}
+                                            <span class="badge bg-success ms-2">Completed</span>
+                                        {% else %}
+                                            <a href="{{ url_for('brand_interview') }}" class="badge bg-secondary ms-2">Add</a>
+                                        {% endif %}
                                     </li>
                                     <li class="list-group-item bg-card">
                                         <i class="fas {% if input_methods.web_scraper.used %}fa-check-circle{% else %}fa-times-circle text-muted{% endif %} me-2"></i>
                                         <span class="text-primary">Web Scraper</span>
+                                        {% if input_methods.web_scraper.used %}
+                                            <span class="badge bg-success ms-2">Completed</span>
+                                        {% else %}
+                                            <a href="{{ url_for('web_scraper') }}" class="badge bg-secondary ms-2">Add</a>
+                                        {% endif %}
                                     </li>
                                 </ul>
                             </div>
@@ -118,7 +167,25 @@
                                     <h5 class="text-primary">Primary Traits</h5>
                                     <ul class="text-white">
                                         {% for trait in brand_parameters.personality.primary_traits %}
-                                            <li>{{ trait|capitalize }}</li>
+                                            <li>
+                                                {{ trait|capitalize }}
+                                                {% if parameter_sources and parameter_sources.personality.primary_traits %}
+                                                    <small class="text-muted">
+                                                        (Source:
+                                                        {% for method in parameter_sources.personality.primary_traits %}
+                                                            {% if loop.index > 1 %}, {% endif %}
+                                                            {% if method == 'document_upload' %}
+                                                                <i class="fas fa-file-alt" title="Document Upload"></i>
+                                                            {% elif method == 'brand_interview' %}
+                                                                <i class="fas fa-comments" title="Brand Interview"></i>
+                                                            {% elif method == 'web_scraper' %}
+                                                                <i class="fas fa-globe" title="Web Scraper"></i>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        )
+                                                    </small>
+                                                {% endif %}
+                                            </li>
                                         {% else %}
                                             <li class="text-muted">No primary traits identified</li>
                                         {% endfor %}
@@ -128,7 +195,25 @@
                                     <h5 class="text-primary">Secondary Traits</h5>
                                     <ul class="text-white">
                                         {% for trait in brand_parameters.personality.secondary_traits %}
-                                            <li>{{ trait|capitalize }}</li>
+                                            <li>
+                                                {{ trait|capitalize }}
+                                                {% if parameter_sources and parameter_sources.personality.secondary_traits %}
+                                                    <small class="text-muted">
+                                                        (Source:
+                                                        {% for method in parameter_sources.personality.secondary_traits %}
+                                                            {% if loop.index > 1 %}, {% endif %}
+                                                            {% if method == 'document_upload' %}
+                                                                <i class="fas fa-file-alt" title="Document Upload"></i>
+                                                            {% elif method == 'brand_interview' %}
+                                                                <i class="fas fa-comments" title="Brand Interview"></i>
+                                                            {% elif method == 'web_scraper' %}
+                                                                <i class="fas fa-globe" title="Web Scraper"></i>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        )
+                                                    </small>
+                                                {% endif %}
+                                            </li>
                                         {% else %}
                                             <li class="text-muted">No secondary traits identified</li>
                                         {% endfor %}
@@ -163,7 +248,25 @@
                                     <h5>Primary Emotions</h5>
                                     <ul>
                                         {% for emotion in brand_parameters.emotional_tone.primary_emotions %}
-                                            <li>{{ emotion|capitalize }}</li>
+                                            <li>
+                                                {{ emotion|capitalize }}
+                                                {% if parameter_sources and parameter_sources.emotional_tone.primary_emotions %}
+                                                    <small class="text-muted">
+                                                        (Source:
+                                                        {% for method in parameter_sources.emotional_tone.primary_emotions %}
+                                                            {% if loop.index > 1 %}, {% endif %}
+                                                            {% if method == 'document_upload' %}
+                                                                <i class="fas fa-file-alt" title="Document Upload"></i>
+                                                            {% elif method == 'brand_interview' %}
+                                                                <i class="fas fa-comments" title="Brand Interview"></i>
+                                                            {% elif method == 'web_scraper' %}
+                                                                <i class="fas fa-globe" title="Web Scraper"></i>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        )
+                                                    </small>
+                                                {% endif %}
+                                            </li>
                                         {% else %}
                                             <li class="text-muted">No primary emotions identified</li>
                                         {% endfor %}
@@ -173,7 +276,25 @@
                                     <h5>Secondary Emotions</h5>
                                     <ul>
                                         {% for emotion in brand_parameters.emotional_tone.secondary_emotions %}
-                                            <li>{{ emotion|capitalize }}</li>
+                                            <li>
+                                                {{ emotion|capitalize }}
+                                                {% if parameter_sources and parameter_sources.emotional_tone.secondary_emotions %}
+                                                    <small class="text-muted">
+                                                        (Source:
+                                                        {% for method in parameter_sources.emotional_tone.secondary_emotions %}
+                                                            {% if loop.index > 1 %}, {% endif %}
+                                                            {% if method == 'document_upload' %}
+                                                                <i class="fas fa-file-alt" title="Document Upload"></i>
+                                                            {% elif method == 'brand_interview' %}
+                                                                <i class="fas fa-comments" title="Brand Interview"></i>
+                                                            {% elif method == 'web_scraper' %}
+                                                                <i class="fas fa-globe" title="Web Scraper"></i>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        )
+                                                    </small>
+                                                {% endif %}
+                                            </li>
                                         {% else %}
                                             <li class="text-muted">No secondary emotions identified</li>
                                         {% endfor %}
@@ -342,6 +463,191 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header card-header-feature">
+                <h2 class="h4 mb-0"><i class="fas fa-file-alt me-2"></i> Brand Voice Summary</h2>
+            </div>
+            <div class="card-body">
+                <p class="lead">Here's a comprehensive summary of your brand voice based on the analysis:</p>
+
+                {% if not summary_approved %}
+                <!-- Summary approval/edit form -->
+                <form action="{{ url_for('approve_summary') }}" method="post" id="summaryForm">
+                    <div class="alert alert-info mb-4">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="fas fa-info-circle fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5 class="alert-heading">Review and Approve</h5>
+                                <p>Please review the brand voice summary below. You can approve it as is or edit it to better match your brand.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-primary">1. Brand Voice Description</h5>
+                        <div class="form-group">
+                            <textarea class="form-control bg-dark text-white" name="tone_description" rows="15" style="white-space: pre-wrap;">{{ brand_voice_summary.tone_description }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-primary">2. Key Brand Phrases</h5>
+                        {% for phrase in brand_voice_summary.example_phrases %}
+                            <div class="form-group mb-2">
+                                <input type="text" class="form-control bg-dark text-white" name="example_phrases" value="{{ phrase }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-primary">3. Words & Phrases We Use</h5>
+                        <div class="form-group">
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                {% for word in brand_voice_summary.frequently_used_words %}
+                                    <div class="input-group" style="width: auto;">
+                                        <input type="text" class="form-control bg-dark text-white" name="frequently_used_words" value="{{ word }}" style="width: 150px;">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-primary">4. Words & Phrases We Avoid</h5>
+                        <div class="form-group">
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                {% for word in brand_voice_summary.words_to_avoid %}
+                                    <div class="input-group" style="width: auto;">
+                                        <input type="text" class="form-control bg-dark text-white" name="words_to_avoid" value="{{ word }}" style="width: 150px;">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" name="action" value="approve" class="btn btn-success">
+                            <i class="fas fa-check me-2"></i> Approve As Is
+                        </button>
+                        <button type="submit" name="action" value="edit" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i> Save Edits
+                        </button>
+                    </div>
+                </form>
+                {% else %}
+                <!-- Approved summary display -->
+                <div class="mb-4">
+                    <h5 class="text-primary">1. Brand Voice Description</h5>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <pre class="text-white" style="white-space: pre-wrap; background-color: transparent; border: none; font-family: inherit; font-size: inherit;">{{ brand_voice_summary.tone_description }}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h5 class="text-primary">2. Key Brand Phrases</h5>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                {% for phrase in brand_voice_summary.example_phrases %}
+                                    <li>{{ phrase }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h5 class="text-primary">3. Words & Phrases We Use</h5>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for word in brand_voice_summary.frequently_used_words %}
+                                    <span class="badge" style="background-color: #36d399; color: #1a1a1a; font-size: 14px; padding: 8px 12px; margin: 4px; font-weight: 500;">{{ word }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h5 class="text-primary">4. Words & Phrases We Avoid</h5>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for word in brand_voice_summary.words_to_avoid %}
+                                    <span class="badge bg-danger">{{ word }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Approved!</strong> This brand voice summary has been approved and is ready for use.
+                </div>
+                {% endif %}
+
+                <div class="mt-3">
+                    <small class="text-muted">{{ brand_voice_summary.source_info }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header card-header-feature">
+                <h2 class="h4 mb-0"><i class="fas fa-bullhorn me-2"></i> Tone of Voice Prompt</h2>
+            </div>
+            <div class="card-body">
+                <p class="lead">Use this comprehensive tone of voice prompt to guide copywriters in creating content that aligns with your brand voice:</p>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="p-3" style="white-space: pre-wrap; font-family: 'Inter', sans-serif; line-height: 1.6; color: #ffffff; font-weight: 400;">
+                            {{ brand_voice_summary.tone_of_voice_prompt | safe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header card-header-feature">
+                <h2 class="h4 mb-0"><i class="fas fa-tags me-2"></i> Campaign Taglines</h2>
+            </div>
+            <div class="card-body">
+                <p class="lead">Here are campaign taglines that exemplify your brand voice:</p>
+
+                <div class="row">
+                    {% for tagline in brand_voice_summary.campaign_taglines %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body d-flex align-items-center justify-content-center text-center p-4">
+                                    <h3 class="display-6" style="font-weight: 600; color: #ffffff;">"{{ tagline }}"</h3>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header card-header-feature">
                 <h2 class="h4 mb-0"><i class="fas fa-pen me-2"></i> Example Copy</h2>
             </div>
             <div class="card-body">
@@ -396,8 +702,10 @@
                 fetch('/api/sync', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token() }}'
+                        'Content-Type': 'application/json'
+                        {% if csrf_token is defined %}
+                        ,'X-CSRFToken': '{{ csrf_token() }}'
+                        {% endif %}
                     }
                 })
                 .then(response => response.json())
@@ -420,34 +728,50 @@
 
         // Personality Chart
         const personalityCtx = document.getElementById('personalityChart').getContext('2d');
+
+        // Get the actual traits from the data
+        const primaryTraits = [
+            {% for trait in brand_parameters.personality.primary_traits %}
+                '{{ trait|capitalize }}',
+            {% endfor %}
+        ];
+        console.log('Primary traits:', primaryTraits);
+
+        const secondaryTraits = [
+            {% for trait in brand_parameters.personality.secondary_traits %}
+                '{{ trait|capitalize }}',
+            {% endfor %}
+        ];
+        console.log('Secondary traits:', secondaryTraits);
+
+        // Combine all traits for labels
+        let allTraits = [...new Set([...primaryTraits, ...secondaryTraits])];
+        console.log('All traits:', allTraits);
+
+        // Ensure we have at least some traits for the chart
+        if (allTraits.length === 0) {
+            allTraits = ['Innovative', 'Trustworthy', 'Friendly', 'Bold', 'Empathetic'];
+            console.log('Using default traits:', allTraits);
+        }
+
         const personalityChart = new Chart(personalityCtx, {
             type: 'radar',
             data: {
-                labels: ['Innovative', 'Trustworthy', 'Playful', 'Sophisticated', 'Friendly', 'Authoritative', 'Bold', 'Empathetic'],
+                labels: allTraits,
                 datasets: [{
-                    label: 'Primary Traits',
-                    data: [
-                        {{ 10 if 'innovative' in brand_parameters.personality.primary_traits else
-                           5 if 'innovative' in brand_parameters.personality.secondary_traits else 0 }},
-                        {{ 10 if 'trustworthy' in brand_parameters.personality.primary_traits else
-                           5 if 'trustworthy' in brand_parameters.personality.secondary_traits else 0 }},
-                        {{ 10 if 'playful' in brand_parameters.personality.primary_traits else
-                           5 if 'playful' in brand_parameters.personality.secondary_traits else 0 }},
-                        {{ 10 if 'sophisticated' in brand_parameters.personality.primary_traits else
-                           5 if 'sophisticated' in brand_parameters.personality.secondary_traits else 0 }},
-                        {{ 10 if 'friendly' in brand_parameters.personality.primary_traits else
-                           5 if 'friendly' in brand_parameters.personality.secondary_traits else 0 }},
-                        {{ 10 if 'authoritative' in brand_parameters.personality.primary_traits else
-                           5 if 'authoritative' in brand_parameters.personality.secondary_traits else 0 }},
-                        {{ 10 if 'bold' in brand_parameters.personality.primary_traits else
-                           5 if 'bold' in brand_parameters.personality.secondary_traits else 0 }},
-                        {{ 10 if 'empathetic' in brand_parameters.personality.primary_traits else
-                           5 if 'empathetic' in brand_parameters.personality.secondary_traits else 0 }}
-                    ],
-                    backgroundColor: 'rgba(196, 196, 196, 0.2)',
-                    borderColor: 'rgba(196, 196, 196, 1)',
+                    label: 'Personality Traits',
+                    data: function() {
+                        // Generate data array in JavaScript instead of Jinja2
+                        return allTraits.map(trait => {
+                            const isPrimary = primaryTraits.some(t => t.toLowerCase() === trait.toLowerCase());
+                            const isSecondary = secondaryTraits.some(t => t.toLowerCase() === trait.toLowerCase());
+                            return isPrimary ? 10 : (isSecondary ? 5 : 0);
+                        });
+                    }(),
+                    backgroundColor: 'rgba(78, 121, 167, 0.2)',
+                    borderColor: 'rgba(78, 121, 167, 1)',
                     borderWidth: 2,
-                    pointBackgroundColor: 'rgba(196, 196, 196, 1)'
+                    pointBackgroundColor: 'rgba(78, 121, 167, 1)'
                 }]
             },
             options: {
@@ -483,42 +807,74 @@
 
         // Emotional Tone Chart
         const emotionalCtx = document.getElementById('emotionalChart').getContext('2d');
+
+        // Get the actual emotions from the data
+        const primaryEmotions = [
+            {% for emotion in brand_parameters.emotional_tone.primary_emotions %}
+                '{{ emotion|capitalize }}',
+            {% endfor %}
+        ];
+        console.log('Primary emotions:', primaryEmotions);
+
+        const secondaryEmotions = [
+            {% for emotion in brand_parameters.emotional_tone.secondary_emotions %}
+                '{{ emotion|capitalize }}',
+            {% endfor %}
+        ];
+        console.log('Secondary emotions:', secondaryEmotions);
+
+        // Combine all emotions for labels
+        let allEmotions = [...new Set([...primaryEmotions, ...secondaryEmotions])];
+        console.log('All emotions:', allEmotions);
+
+        // Ensure we have at least some emotions for the chart
+        if (allEmotions.length === 0) {
+            allEmotions = ['Optimistic', 'Passionate', 'Calm', 'Reassuring'];
+            console.log('Using default emotions:', allEmotions);
+        }
+
         const emotionalChart = new Chart(emotionalCtx, {
             type: 'pie',
             data: {
-                labels: ['Optimistic', 'Serious', 'Passionate', 'Calm', 'Urgent', 'Reassuring'],
+                labels: allEmotions,
                 datasets: [{
-                    data: [
-                        {{ 10 if 'optimistic' in brand_parameters.emotional_tone.primary_emotions else
-                           5 if 'optimistic' in brand_parameters.emotional_tone.secondary_emotions else 1 }},
-                        {{ 10 if 'serious' in brand_parameters.emotional_tone.primary_emotions else
-                           5 if 'serious' in brand_parameters.emotional_tone.secondary_emotions else 1 }},
-                        {{ 10 if 'passionate' in brand_parameters.emotional_tone.primary_emotions else
-                           5 if 'passionate' in brand_parameters.emotional_tone.secondary_emotions else 1 }},
-                        {{ 10 if 'calm' in brand_parameters.emotional_tone.primary_emotions else
-                           5 if 'calm' in brand_parameters.emotional_tone.secondary_emotions else 1 }},
-                        {{ 10 if 'urgent' in brand_parameters.emotional_tone.primary_emotions else
-                           5 if 'urgent' in brand_parameters.emotional_tone.secondary_emotions else 1 }},
-                        {{ 10 if 'reassuring' in brand_parameters.emotional_tone.primary_emotions else
-                           5 if 'reassuring' in brand_parameters.emotional_tone.secondary_emotions else 1 }}
-                    ],
+                    data: function() {
+                        // Generate data array in JavaScript instead of Jinja2
+                        return allEmotions.map(emotion => {
+                            const isPrimary = primaryEmotions.some(e => e.toLowerCase() === emotion.toLowerCase());
+                            const isSecondary = secondaryEmotions.some(e => e.toLowerCase() === emotion.toLowerCase());
+                            return isPrimary ? 10 : (isSecondary ? 5 : 1);
+                        });
+                    }(),
                     backgroundColor: [
-                        'rgba(78, 121, 167, 0.7)',  // Blue
-                        'rgba(242, 142, 43, 0.7)',  // Orange
-                        'rgba(225, 87, 89, 0.7)',   // Red
-                        'rgba(118, 183, 178, 0.7)', // Teal
-                        'rgba(89, 161, 79, 0.7)',   // Green
-                        'rgba(140, 85, 140, 0.7)'   // Purple
-                    ],
+                        'rgba(78, 121, 167, 0.7)',   // Blue
+                        'rgba(242, 142, 43, 0.7)',   // Orange
+                        'rgba(225, 87, 89, 0.7)',    // Red
+                        'rgba(118, 183, 178, 0.7)',  // Teal
+                        'rgba(89, 161, 79, 0.7)',    // Green
+                        'rgba(140, 85, 140, 0.7)',   // Purple
+                        'rgba(127, 201, 127, 0.7)',  // Light Green
+                        'rgba(190, 184, 220, 0.7)',  // Light Purple
+                        'rgba(253, 180, 98, 0.7)',   // Light Orange
+                        'rgba(255, 140, 140, 0.7)',  // Light Red
+                        'rgba(30, 144, 255, 0.7)',   // Dodger Blue
+                        'rgba(255, 215, 0, 0.7)'     // Gold
+                    ].slice(0, allEmotions.length),
                     borderWidth: 1,
                     borderColor: [
-                        'rgba(78, 121, 167, 1)',    // Blue
-                        'rgba(242, 142, 43, 1)',    // Orange
-                        'rgba(225, 87, 89, 1)',     // Red
-                        'rgba(118, 183, 178, 1)',   // Teal
-                        'rgba(89, 161, 79, 1)',     // Green
-                        'rgba(140, 85, 140, 1)'     // Purple
-                    ]
+                        'rgba(78, 121, 167, 1)',     // Blue
+                        'rgba(242, 142, 43, 1)',     // Orange
+                        'rgba(225, 87, 89, 1)',      // Red
+                        'rgba(118, 183, 178, 1)',    // Teal
+                        'rgba(89, 161, 79, 1)',      // Green
+                        'rgba(140, 85, 140, 1)',     // Purple
+                        'rgba(127, 201, 127, 1)',    // Light Green
+                        'rgba(190, 184, 220, 1)',    // Light Purple
+                        'rgba(253, 180, 98, 1)',     // Light Orange
+                        'rgba(255, 140, 140, 1)',    // Light Red
+                        'rgba(30, 144, 255, 1)',     // Dodger Blue
+                        'rgba(255, 215, 0, 1)'       // Gold
+                    ].slice(0, allEmotions.length)
                 }]
             },
             options: {
@@ -555,7 +911,18 @@
                     value: {{ brand_parameters.formality.level }},
                     minValue: 1,
                     maxValue: 10,
-                    backgroundColor: ['#424242', '#4f4f4f', '#5c5c5c', '#696969', '#757575', '#828282', '#8f8f8f', '#9c9c9c', '#a9a9a9', '#b6b6b6'],
+                    backgroundColor: [
+                        'rgba(78, 121, 167, 0.7)',  // Blue
+                        'rgba(89, 161, 79, 0.7)',   // Green
+                        'rgba(118, 183, 178, 0.7)', // Teal
+                        'rgba(140, 85, 140, 0.7)',  // Purple
+                        'rgba(242, 142, 43, 0.7)',  // Orange
+                        'rgba(225, 87, 89, 0.7)',   // Red
+                        'rgba(127, 201, 127, 0.7)', // Light Green
+                        'rgba(190, 184, 220, 0.7)', // Light Purple
+                        'rgba(253, 180, 98, 0.7)',  // Light Orange
+                        'rgba(255, 140, 140, 0.7)'  // Light Red
+                    ],
                     borderWidth: 0
                 }]
             },
@@ -602,14 +969,14 @@
                         {{ brand_parameters.communication_style.sentence_structure.complexity_preference }}
                     ],
                     backgroundColor: [
-                        'rgba(196, 196, 196, 0.7)',
-                        'rgba(196, 196, 196, 0.7)',
-                        'rgba(196, 196, 196, 0.7)'
+                        'rgba(78, 121, 167, 0.7)',  // Blue
+                        'rgba(242, 142, 43, 0.7)',  // Orange
+                        'rgba(225, 87, 89, 0.7)'    // Red
                     ],
                     borderColor: [
-                        'rgba(196, 196, 196, 1)',
-                        'rgba(196, 196, 196, 1)',
-                        'rgba(196, 196, 196, 1)'
+                        'rgba(78, 121, 167, 1)',    // Blue
+                        'rgba(242, 142, 43, 1)',    // Orange
+                        'rgba(225, 87, 89, 1)'      // Red
                     ],
                     borderWidth: 1
                 }]
