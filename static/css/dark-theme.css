@@ -14,12 +14,12 @@
     --text-tertiary: #9e9e9e;
     --text-placeholder: #6e6e6e;
     --border-color: #3a3a3a;
-    --success-color: #36d399;
-    --live-color: #22c55e;
+    --success-color: #9e9e9e; /* Changed from green to gray */
+    --live-color: #9e9e9e; /* Changed from green to gray */
     --error-color: #ff4d4d;
     --warning-color: #ffab00;
-    --icon-color: #ffffff;
-    --icon-accent: #36d399;
+    --icon-color: #9e9e9e; /* Changed to gray */
+    --icon-accent: #9e9e9e; /* Changed from green to gray */
 
     /* UI Elements */
     --hover-bg: #2c2c2c;
@@ -174,8 +174,8 @@ a:hover {
 
 /* Live Badge */
 .badge-live {
-    background-color: var(--live-color);
-    color: var(--text-primary);
+    background-color: var(--text-secondary);
+    color: var(--primary-bg);
     font-size: 10px;
     font-weight: 600;
     padding: 2px 6px;
@@ -252,7 +252,7 @@ a:hover {
 /* Info Cards */
 .info-card {
     background-color: var(--card-bg);
-    border-left: 4px solid var(--primary-accent);
+    border-left: 4px solid var(--text-secondary);
     padding: var(--spacing-md);
     margin-bottom: var(--spacing-md);
     border-radius: var(--border-radius-sm);
@@ -291,16 +291,16 @@ a:hover {
     font-size: 18px;
 }
 
-/* Primary Button - Green Accent */
+/* Primary Button - Gray Accent */
 .btn-primary {
-    background-color: var(--primary-accent);
-    border-color: var(--primary-accent);
-    color: var(--text-primary);
+    background-color: var(--text-secondary);
+    border-color: var(--text-secondary);
+    color: var(--primary-bg);
 }
 
 .btn-primary:hover, .btn-primary:focus {
-    background-color: var(--primary-accent);
-    border-color: var(--primary-accent);
+    background-color: var(--text-secondary);
+    border-color: var(--text-secondary);
     filter: brightness(0.9);
     box-shadow: var(--shadow-sm);
 }
@@ -336,14 +336,14 @@ a:hover {
 /* Outline Primary Button */
 .btn-outline-primary {
     background-color: transparent;
-    border: var(--border-width) solid var(--primary-accent);
-    color: var(--primary-accent);
+    border: var(--border-width) solid var(--text-secondary);
+    color: var(--text-secondary);
 }
 
 .btn-outline-primary:hover, .btn-outline-primary:focus {
-    background-color: rgba(54, 211, 153, 0.1);
-    border-color: var(--primary-accent);
-    color: var(--primary-accent);
+    background-color: rgba(196, 196, 196, 0.1);
+    border-color: var(--text-secondary);
+    color: var(--text-secondary);
     box-shadow: var(--shadow-sm);
 }
 
@@ -357,6 +357,20 @@ a:hover {
 .btn-danger:hover, .btn-danger:focus {
     background-color: var(--error-color);
     border-color: var(--error-color);
+    filter: brightness(0.9);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Success Button */
+.btn-success {
+    background-color: var(--text-secondary);
+    border-color: var(--text-secondary);
+    color: var(--primary-bg);
+}
+
+.btn-success:hover, .btn-success:focus {
+    background-color: var(--text-secondary);
+    border-color: var(--text-secondary);
     filter: brightness(0.9);
     box-shadow: var(--shadow-sm);
 }
@@ -382,8 +396,8 @@ a:hover {
 
 .form-control:focus, .form-select:focus {
     background-color: var(--input-bg);
-    border-color: var(--primary-accent);
-    box-shadow: 0 0 0 2px rgba(54, 211, 153, 0.2);
+    border-color: var(--text-secondary);
+    box-shadow: 0 0 0 2px rgba(196, 196, 196, 0.2);
     color: var(--text-primary);
 }
 
@@ -446,9 +460,9 @@ textarea.form-control {
 }
 
 .alert-success {
-    background-color: rgba(54, 211, 153, 0.1);
-    color: var(--success-color);
-    border-left: 4px solid var(--success-color);
+    background-color: rgba(196, 196, 196, 0.1);
+    color: var(--text-secondary);
+    border-left: 4px solid var(--text-secondary);
 }
 
 .alert-danger {
@@ -630,8 +644,8 @@ textarea.form-control {
 
 /* Chart Colors */
 .chart-colors {
-    --chart-color1: var(--primary-accent);
-    --chart-color2: var(--secondary-accent);
+    --chart-color1: var(--text-secondary);
+    --chart-color2: var(--text-tertiary);
     --chart-color3: var(--error-color);
     --chart-color4: #36a2eb;
     --chart-color5: #9966ff;
@@ -652,7 +666,7 @@ textarea.form-control {
 .feature-card-icon {
     font-size: 48px;
     margin-bottom: var(--spacing-md);
-    color: var(--primary-accent);
+    color: var(--text-secondary);
 }
 
 /* Feature Section */
