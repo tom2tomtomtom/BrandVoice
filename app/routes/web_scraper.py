@@ -52,9 +52,9 @@ def scrape_website(url):
         except (requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
             print(f"SSL/Connection Error with custom adapter: {str(e)}")
 
-            # Check if it's a hostname mismatch error
-            if "Hostname mismatch" in str(e) or "certificate verify failed" in str(e):
-                print("Detected hostname mismatch or certificate verification error")
+            # Check if it's any kind of SSL certificate error
+            if "Hostname mismatch" in str(e) or "certificate verify failed" in str(e) or "certificate has expired" in str(e) or "SSL" in str(e):
+                print("Detected SSL certificate error (expired, hostname mismatch, or other verification issue)")
                 # Try with a more aggressive approach to bypass SSL
                 try:
                     print("Trying with urllib and completely unverified SSL context")
@@ -86,7 +86,41 @@ def scrape_website(url):
                             print("HTTP Response successful")
                         except Exception as http_e:
                             print(f"HTTP retry failed: {str(http_e)}")
-                            raise
+
+                            # Last resort for expired certificates: try with a different approach
+                            try:
+                                print("Trying with a completely different approach for expired certificates...")
+                                # Try with a different library - requests with a custom adapter
+                                import ssl
+                                from urllib3.poolmanager import PoolManager
+
+                                # Create a custom adapter that accepts all certificates
+                                class TLSAdapter(requests.adapters.HTTPAdapter):
+                                    def init_poolmanager(self, connections, maxsize, block=False):
+                                        ctx = ssl.create_default_context()
+                                        ctx.check_hostname = False
+                                        ctx.verify_mode = ssl.CERT_NONE
+                                        self.poolmanager = PoolManager(
+                                            num_pools=connections,
+                                            maxsize=maxsize,
+                                            block=block,
+                                            ssl_version=ssl.PROTOCOL_TLS,
+                                            ssl_context=ctx
+                                        )
+
+                                # Create a new session with the custom adapter
+                                last_resort_session = requests.session()
+                                last_resort_session.mount('https://', TLSAdapter())
+
+                                # Try to get the page
+                                print(f"Making last resort request to {url}")
+                                response = last_resort_session.get(url, headers=headers, timeout=30)
+                                print(f"Last resort response status code: {response.status_code}")
+                                response.raise_for_status()
+                                print("Last resort approach successful")
+                            except Exception as last_e:
+                                print(f"Last resort approach failed: {str(last_e)}")
+                                raise
                     else:
                         raise
             else:
@@ -194,9 +228,9 @@ def get_internal_links(url):
         except (requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
             print(f"SSL/Connection Error with custom adapter: {str(e)}")
 
-            # Check if it's a hostname mismatch error
-            if "Hostname mismatch" in str(e) or "certificate verify failed" in str(e):
-                print("Detected hostname mismatch or certificate verification error")
+            # Check if it's any kind of SSL certificate error
+            if "Hostname mismatch" in str(e) or "certificate verify failed" in str(e) or "certificate has expired" in str(e) or "SSL" in str(e):
+                print("Detected SSL certificate error (expired, hostname mismatch, or other verification issue)")
                 # Try with a more aggressive approach to bypass SSL
                 try:
                     print("Trying with urllib and completely unverified SSL context")
@@ -228,7 +262,41 @@ def get_internal_links(url):
                             print("HTTP Response successful")
                         except Exception as http_e:
                             print(f"HTTP retry failed: {str(http_e)}")
-                            raise
+
+                            # Last resort for expired certificates: try with a different approach
+                            try:
+                                print("Trying with a completely different approach for expired certificates...")
+                                # Try with a different library - requests with a custom adapter
+                                import ssl
+                                from urllib3.poolmanager import PoolManager
+
+                                # Create a custom adapter that accepts all certificates
+                                class TLSAdapter(requests.adapters.HTTPAdapter):
+                                    def init_poolmanager(self, connections, maxsize, block=False):
+                                        ctx = ssl.create_default_context()
+                                        ctx.check_hostname = False
+                                        ctx.verify_mode = ssl.CERT_NONE
+                                        self.poolmanager = PoolManager(
+                                            num_pools=connections,
+                                            maxsize=maxsize,
+                                            block=block,
+                                            ssl_version=ssl.PROTOCOL_TLS,
+                                            ssl_context=ctx
+                                        )
+
+                                # Create a new session with the custom adapter
+                                last_resort_session = requests.session()
+                                last_resort_session.mount('https://', TLSAdapter())
+
+                                # Try to get the page
+                                print(f"Making last resort request to {url}")
+                                response = last_resort_session.get(url, headers=headers, timeout=30)
+                                print(f"Last resort response status code: {response.status_code}")
+                                response.raise_for_status()
+                                print("Last resort approach successful")
+                            except Exception as last_e:
+                                print(f"Last resort approach failed: {str(last_e)}")
+                                raise
                     else:
                         raise
             else:
