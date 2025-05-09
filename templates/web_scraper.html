@@ -1,61 +1,60 @@
 {% extends 'base.html' %}
 
-{% block title %}Brand Voice Codifier - Web Scraper{% endblock %}
+{% block title %}Web Scraper{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <h1>Web Presence Scraper</h1>
+    <p class="lead">Analyze your website content to identify brand voice patterns and consistency.</p>
+</div>
+
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h2 class="h4 mb-0"><i class="fas fa-globe me-2"></i> Web Presence Scraper</h2>
+            <div class="card-header card-header-feature">
+                <h2 class="h4 mb-0"><i class="fas fa-globe icon-primary me-2"></i> Website Analysis</h2>
             </div>
             <div class="card-body">
-                <p class="lead">Analyze your website content to identify brand voice patterns.</p>
-                
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <div class="card bg-light">
-                            <div class="card-body">
-                                <h5><i class="fas fa-check-circle me-2 text-primary"></i> What We Analyze</h5>
-                                <ul>
-                                    <li>Text content from your website</li>
-                                    <li>Brand voice patterns and consistency</li>
-                                    <li>Key parameters from your real-world usage</li>
-                                    <li>Strong examples of your current brand voice</li>
-                                </ul>
-                            </div>
+                        <div class="info-card">
+                            <h5><i class="fas fa-check-circle icon-accent me-2"></i> What We Analyze</h5>
+                            <ul>
+                                <li>Text content from your website</li>
+                                <li>Brand voice patterns and consistency</li>
+                                <li>Key parameters from your real-world usage</li>
+                                <li>Strong examples of your current brand voice</li>
+                            </ul>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card bg-light">
-                            <div class="card-body">
-                                <h5><i class="fas fa-info-circle me-2 text-primary"></i> For Best Results</h5>
-                                <ul>
-                                    <li>Enter your main website URL</li>
-                                    <li>Ensure the site has sufficient text content</li>
-                                    <li>The system works best on content-rich pages</li>
-                                    <li>Make sure your website is publicly accessible</li>
-                                </ul>
-                            </div>
+                        <div class="info-card">
+                            <h5><i class="fas fa-info-circle icon-accent me-2"></i> For Best Results</h5>
+                            <ul>
+                                <li>Enter your main website URL</li>
+                                <li>Ensure the site has sufficient text content</li>
+                                <li>The system works best on content-rich pages</li>
+                                <li>Make sure your website is publicly accessible</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-                
+
                 <form action="{{ url_for('web_scraper') }}" method="post" class="mt-4">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    
-                    <div class="mb-4">
+
+                    <div class="form-group">
                         <label for="url" class="form-label">Enter your website URL</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                        <div class="input-with-icon">
+                            <i class="fas fa-globe"></i>
                             <input type="url" class="form-control" id="url" name="url" placeholder="https://example.com" required>
                         </div>
                         <div class="form-text">Example: https://example.com or example.com</div>
                     </div>
-                    
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                         <button type="submit" class="btn btn-primary" id="analyze-button">
-                            <i class="fas fa-search me-2"></i> Analyze Website
+                            <i class="fas fa-search"></i> Analyze Website
                         </button>
                     </div>
                 </form>
@@ -64,69 +63,53 @@
     </div>
 </div>
 
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-light">
-                <h3 class="h5 mb-0">How Web Scraping Works</h3>
+<div class="feature-section mt-5">
+    <h2 class="h4 mb-3">How Web Scraping Works</h2>
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <div class="feature-card h-100">
+                <i class="fas fa-spider icon-accent feature-card-icon"></i>
+                <h5 class="card-title">Content Scraping</h5>
+                <p class="card-text">Our system visits your website and extracts text content from the page.</p>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3 mb-3 text-center">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <i class="fas fa-spider fa-3x text-primary mb-3"></i>
-                                <h5 class="card-title">Content Scraping</h5>
-                                <p class="card-text">Our system visits your website and extracts text content from the page.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-3 mb-3 text-center">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <i class="fas fa-filter fa-3x text-primary mb-3"></i>
-                                <h5 class="card-title">Text Processing</h5>
-                                <p class="card-text">The extracted text is cleaned and processed for analysis.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-3 mb-3 text-center">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <i class="fas fa-chart-pie fa-3x text-primary mb-3"></i>
-                                <h5 class="card-title">Pattern Analysis</h5>
-                                <p class="card-text">We analyze the text for patterns in language, tone, and style.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-3 mb-3 text-center">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <i class="fas fa-cogs fa-3x text-primary mb-3"></i>
-                                <h5 class="card-title">Parameter Extraction</h5>
-                                <p class="card-text">Key brand voice parameters are identified and quantified.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="feature-card h-100">
+                <i class="fas fa-filter icon-accent feature-card-icon"></i>
+                <h5 class="card-title">Text Processing</h5>
+                <p class="card-text">The extracted text is cleaned and processed for analysis.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="feature-card h-100">
+                <i class="fas fa-chart-pie icon-accent feature-card-icon"></i>
+                <h5 class="card-title">Pattern Analysis</h5>
+                <p class="card-text">We analyze the text for patterns in language, tone, and style.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="feature-card h-100">
+                <i class="fas fa-cogs icon-accent feature-card-icon"></i>
+                <h5 class="card-title">Parameter Extraction</h5>
+                <p class="card-text">Key brand voice parameters are identified and quantified.</p>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row mt-4">
+<div class="row mt-5">
     <div class="col-12">
         <div class="card">
-            <div class="card-header bg-light">
+            <div class="card-header">
                 <h3 class="h5 mb-0">Privacy & Security</h3>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <h5><i class="fas fa-shield-alt text-primary me-2"></i> How We Handle Your Data</h5>
+                        <h5><i class="fas fa-shield-alt icon-accent me-2"></i> How We Handle Your Data</h5>
                         <ul>
                             <li>We only analyze publicly available content from your website</li>
                             <li>We do not store the raw content from your website</li>
@@ -135,7 +118,7 @@
                         </ul>
                     </div>
                     <div class="col-md-6">
-                        <h5><i class="fas fa-exclamation-triangle text-primary me-2"></i> Limitations</h5>
+                        <h5><i class="fas fa-exclamation-triangle icon-accent me-2"></i> Limitations</h5>
                         <ul>
                             <li>We can only analyze publicly accessible pages</li>
                             <li>Password-protected content cannot be accessed</li>
@@ -156,7 +139,7 @@
         const urlInput = document.getElementById('url');
         const analyzeButton = document.getElementById('analyze-button');
         const form = document.querySelector('form');
-        
+
         form.addEventListener('submit', function() {
             // Show loading state
             analyzeButton.disabled = true;

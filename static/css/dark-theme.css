@@ -2,11 +2,11 @@
 
 /* Base Styles */
 :root {
-    /* Color System */
+    /* Color System - Standardized */
     --primary-bg: #1a1a1a;
     --secondary-bg: #252525;
     --card-bg: #2a2a2a;
-    --card-bg-alt: #2d3649;
+    --feature-header-bg: #2d3649; /* Navy blue for feature headers */
     --primary-accent: #36d399;
     --secondary-accent: #f5d76e;
     --text-primary: #ffffff;
@@ -18,6 +18,8 @@
     --live-color: #22c55e;
     --error-color: #ff4d4d;
     --warning-color: #ffab00;
+    --icon-color: #ffffff;
+    --icon-accent: #36d399;
 
     /* UI Elements */
     --hover-bg: #2c2c2c;
@@ -46,6 +48,11 @@
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
     --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+    /* Button Dimensions */
+    --button-height: 48px;
+    --button-padding-x: 24px;
+    --button-font-size: 16px;
 }
 
 body {
@@ -197,7 +204,7 @@ a:hover {
     color: var(--error-color);
 }
 
-/* Card Styles */
+/* Card Styles - Standardized */
 .card {
     background-color: var(--card-bg);
     border: var(--border-width) solid var(--border-color);
@@ -212,8 +219,8 @@ a:hover {
     box-shadow: var(--shadow-md);
 }
 
-.card-alt {
-    background-color: var(--card-bg-alt);
+.card-feature {
+    background-color: var(--feature-header-bg);
 }
 
 .card-header {
@@ -221,9 +228,13 @@ a:hover {
     border-bottom: var(--border-width) solid var(--border-color);
     font-weight: 600;
     color: var(--text-primary);
-    padding: var(--spacing-sm);
+    padding: var(--spacing-md);
     border-top-left-radius: calc(var(--border-radius-md) - 1px);
     border-top-right-radius: calc(var(--border-radius-md) - 1px);
+}
+
+.card-header-feature {
+    background-color: var(--feature-header-bg);
 }
 
 .card-body {
@@ -233,18 +244,27 @@ a:hover {
 .card-footer {
     background-color: var(--secondary-bg);
     border-top: var(--border-width) solid var(--border-color);
-    padding: var(--spacing-sm);
+    padding: var(--spacing-md);
     border-bottom-left-radius: calc(var(--border-radius-md) - 1px);
     border-bottom-right-radius: calc(var(--border-radius-md) - 1px);
 }
 
-/* Button Styles */
+/* Info Cards */
+.info-card {
+    background-color: var(--card-bg);
+    border-left: 4px solid var(--primary-accent);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+}
+
+/* Button Styles - Standardized */
 .btn {
     border-radius: var(--border-radius-md);
     font-weight: 500;
-    font-size: 16px;
-    padding: 12px 24px;
-    height: 48px;
+    font-size: var(--button-font-size);
+    padding: 0 var(--button-padding-x);
+    height: var(--button-height);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -253,20 +273,21 @@ a:hover {
 
 .btn-sm {
     height: 36px;
-    padding: 8px 16px;
+    padding: 0 16px;
     font-size: 14px;
 }
 
 .btn-lg {
     height: 56px;
-    padding: 16px 32px;
+    padding: 0 32px;
     font-size: 18px;
 }
 
+/* Primary Button - Green Accent */
 .btn-primary {
     background-color: var(--primary-accent);
     border-color: var(--primary-accent);
-    color: var(--primary-bg);
+    color: var(--text-primary);
 }
 
 .btn-primary:hover, .btn-primary:focus {
@@ -276,6 +297,7 @@ a:hover {
     box-shadow: var(--shadow-sm);
 }
 
+/* Secondary Button */
 .btn-secondary {
     background-color: transparent;
     border: var(--border-width) solid var(--border-color);
@@ -289,6 +311,7 @@ a:hover {
     box-shadow: var(--shadow-sm);
 }
 
+/* Accent Button - Gold/Yellow */
 .btn-accent {
     background-color: var(--secondary-accent);
     border-color: var(--secondary-accent);
@@ -302,6 +325,7 @@ a:hover {
     box-shadow: var(--shadow-sm);
 }
 
+/* Outline Primary Button */
 .btn-outline-primary {
     background-color: transparent;
     border: var(--border-width) solid var(--primary-accent);
@@ -315,6 +339,7 @@ a:hover {
     box-shadow: var(--shadow-sm);
 }
 
+/* Danger Button */
 .btn-danger {
     background-color: var(--error-color);
     border-color: var(--error-color);
@@ -328,19 +353,22 @@ a:hover {
     box-shadow: var(--shadow-sm);
 }
 
+/* Button Icons */
 .btn i {
     margin-right: 8px;
+    color: inherit;
 }
 
-/* Form Styles */
+/* Form Styles - Standardized */
 .form-control, .form-select {
     background-color: var(--input-bg);
     border: var(--border-width) solid var(--border-color);
     color: var(--text-primary);
     border-radius: var(--border-radius-sm);
     padding: 16px;
-    height: 48px;
+    height: var(--button-height);
     font-size: 16px;
+    font-family: 'Inter', sans-serif;
     transition: all var(--transition-speed) var(--transition-function);
 }
 
@@ -353,6 +381,7 @@ a:hover {
 
 .form-control::placeholder {
     color: var(--text-placeholder);
+    font-family: 'Inter', sans-serif;
 }
 
 .form-label {
@@ -361,12 +390,14 @@ a:hover {
     font-weight: 500;
     margin-bottom: 8px;
     display: block;
+    font-family: 'Inter', sans-serif;
 }
 
 .form-text {
     color: var(--text-tertiary);
     font-size: 14px;
     margin-top: 4px;
+    font-family: 'Inter', sans-serif;
 }
 
 .form-group {
@@ -376,6 +407,24 @@ a:hover {
 textarea.form-control {
     min-height: 120px;
     resize: vertical;
+}
+
+/* Input with icon */
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon .form-control {
+    padding-left: 48px;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 18px;
 }
 
 /* Alert Styles */
@@ -585,6 +634,7 @@ textarea.form-control {
     text-align: center;
     padding: var(--spacing-md);
     transition: all var(--transition-speed) var(--transition-function);
+    background-color: var(--card-bg);
 }
 
 .feature-card:hover {
@@ -595,6 +645,38 @@ textarea.form-control {
     font-size: 48px;
     margin-bottom: var(--spacing-md);
     color: var(--primary-accent);
+}
+
+/* Feature Section */
+.feature-section {
+    background-color: var(--feature-header-bg);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.feature-section h2,
+.feature-section h3,
+.feature-section h4 {
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Icon Standardization */
+.icon-primary {
+    color: var(--icon-color);
+}
+
+.icon-accent {
+    color: var(--icon-accent);
+}
+
+.icon-lg {
+    font-size: 24px;
+}
+
+.icon-xl {
+    font-size: 32px;
 }
 
 /* Page Header */
