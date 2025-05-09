@@ -1,27 +1,23 @@
 {% extends 'base.html' %}
 
-{% block title %}Brand Voice Codifier - Home{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
 <div class="row">
-    <div class="col-12">
-        <div class="jumbotron bg-light p-5 rounded">
-            <h1 class="display-4">Brand Voice Codifier</h1>
-            <p class="lead">Analyze, capture, and codify your brand's tone of voice for integration with copywriting systems.</p>
-            <hr class="my-4">
-            <p>Choose one of the input methods below to begin capturing your brand voice parameters.</p>
-        </div>
+    <div class="col-12 mb-4">
+        <h1>Brand Voice Codifier</h1>
+        <p class="lead">Analyze, capture, and codify your brand's tone of voice for integration with copywriting systems.</p>
     </div>
 </div>
 
-<div class="row mt-4">
+<div class="row mt-2">
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="fas fa-file-upload me-2"></i> Document Upload</h5>
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-file-upload me-2" style="color: var(--primary-accent);"></i> Document Analysis</h5>
             </div>
             <div class="card-body d-flex flex-column">
-                <p>Upload your existing brand documents (guidelines, mission statements, marketing materials) and let our system extract key brand voice elements.</p>
+                <p>Upload brand documents (guidelines, mission statements, marketing materials) for voice analysis.</p>
                 <div class="mt-auto">
                     {% if input_methods.document_upload.used %}
                         <div class="alert alert-success mb-3">
@@ -30,7 +26,7 @@
                     {% endif %}
                     <a href="{{ url_for('document_upload') }}" class="btn btn-primary w-100">
                         {% if input_methods.document_upload.used %}
-                            <i class="fas fa-redo me-2"></i> Analyze Another Document
+                            <i class="fas fa-redo me-2"></i> Analyze New Document
                         {% else %}
                             <i class="fas fa-upload me-2"></i> Upload Document
                         {% endif %}
@@ -39,14 +35,14 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="fas fa-comments me-2"></i> Brand Interview</h5>
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-comments me-2" style="color: var(--primary-accent);"></i> Brand Interview</h5>
             </div>
             <div class="card-body d-flex flex-column">
-                <p>Answer a series of questions about your brand's personality, voice, and style to help us understand your brand voice preferences.</p>
+                <p>Answer questions about your brand's personality, voice, and style to define your brand voice.</p>
                 <div class="mt-auto">
                     {% if input_methods.brand_interview.used %}
                         <div class="alert alert-success mb-3">
@@ -64,14 +60,14 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="fas fa-globe me-2"></i> Web Scraper</h5>
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-globe me-2" style="color: var(--primary-accent);"></i> Web Scraper</h5>
             </div>
             <div class="card-body d-flex flex-column">
-                <p>Provide your website URL and let us analyze your existing public-facing content for voice consistency and patterns.</p>
+                <p>Analyze your website content to identify voice patterns and consistency across your web presence.</p>
                 <div class="mt-auto">
                     {% if input_methods.web_scraper.used %}
                         <div class="alert alert-success mb-3">
@@ -80,7 +76,7 @@
                     {% endif %}
                     <a href="{{ url_for('web_scraper') }}" class="btn btn-primary w-100">
                         {% if input_methods.web_scraper.used %}
-                            <i class="fas fa-redo me-2"></i> Analyze Another Website
+                            <i class="fas fa-redo me-2"></i> Analyze New Website
                         {% else %}
                             <i class="fas fa-search me-2"></i> Analyze Website
                         {% endif %}
@@ -94,11 +90,11 @@
 {% if input_methods.document_upload.used or input_methods.brand_interview.used or input_methods.web_scraper.used %}
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card bg-success text-white">
-                <div class="card-body text-center">
-                    <h4><i class="fas fa-check-circle me-2"></i> You've completed at least one input method!</h4>
+            <div class="card" style="border-color: var(--primary-accent); background-color: rgba(54, 211, 153, 0.1);">
+                <div class="card-body text-center py-4">
+                    <h4><i class="fas fa-check-circle me-2" style="color: var(--primary-accent);"></i> You've completed at least one input method!</h4>
                     <p>View your brand voice parameters and export them for use in copywriting systems.</p>
-                    <a href="{{ url_for('results') }}" class="btn btn-light btn-lg">
+                    <a href="{{ url_for('results') }}" class="btn btn-primary btn-lg px-4 py-2 mt-2">
                         <i class="fas fa-chart-bar me-2"></i> View Results
                     </a>
                 </div>
@@ -107,47 +103,38 @@
     </div>
 {% endif %}
 
-<div class="row mt-4">
+<div class="row mt-5">
     <div class="col-12">
         <div class="card">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">About the Brand Voice Codifier</h5>
+            <div class="card-header">
+                <h5 class="mb-0">About Brand Voice Codifier</h5>
             </div>
             <div class="card-body">
-                <p>The Brand Voice Codifier is a tool designed to analyze, capture, and codify a client's brand tone of voice for integration with a copywriting agent in an ad creation platform.</p>
-                
-                <h6 class="mt-4">What You'll Get:</h6>
-                <div class="row">
+                <p>Brand Voice Codifier is a sophisticated tool designed to analyze, capture, and codify your brand's unique tone of voice for seamless integration with AI copywriting systems.</p>
+
+                <div class="row mt-4">
                     <div class="col-md-6">
-                        <ul>
-                            <li>Brand Personality Profile</li>
-                            <li>Formality Spectrum</li>
-                            <li>Emotional Tone Framework</li>
+                        <h6 style="color: var(--primary-accent);">Brand Voice Parameters</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check-circle me-2" style="color: var(--primary-accent);"></i> Brand Personality Profile</li>
+                            <li><i class="fas fa-check-circle me-2" style="color: var(--primary-accent);"></i> Formality Spectrum Analysis</li>
+                            <li><i class="fas fa-check-circle me-2" style="color: var(--primary-accent);"></i> Emotional Tone Framework</li>
+                            <li><i class="fas fa-check-circle me-2" style="color: var(--primary-accent);"></i> Vocabulary & Terminology Profile</li>
                         </ul>
                     </div>
                     <div class="col-md-6">
-                        <ul>
-                            <li>Vocabulary Profile</li>
-                            <li>Communication Style Parameters</li>
-                            <li>Audience Adaptation Guidelines</li>
+                        <h6 style="color: var(--primary-accent);">Key Features</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check-circle me-2" style="color: var(--primary-accent);"></i> Multi-source analysis methods</li>
+                            <li><i class="fas fa-check-circle me-2" style="color: var(--primary-accent);"></i> AI-powered parameter extraction</li>
+                            <li><i class="fas fa-check-circle me-2" style="color: var(--primary-accent);"></i> Interactive visualization dashboard</li>
+                            <li><i class="fas fa-check-circle me-2" style="color: var(--primary-accent);"></i> Export for AI copywriting integration</li>
                         </ul>
                     </div>
                 </div>
-                
-                <h6 class="mt-3">Key Features:</h6>
-                <div class="row">
-                    <div class="col-md-6">
-                        <ul>
-                            <li>Multiple input methods for comprehensive analysis</li>
-                            <li>Parameter extraction and classification</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <ul>
-                            <li>Visual dashboard for parameter review</li>
-                            <li>Export functionality for copywriting integration</li>
-                        </ul>
-                    </div>
+
+                <div class="mt-4">
+                    <p class="mb-0" style="color: var(--text-secondary);">Start by selecting one of the input methods above to begin analyzing your brand voice.</p>
                 </div>
             </div>
         </div>

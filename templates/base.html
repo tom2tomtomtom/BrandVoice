@@ -11,63 +11,76 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Inter Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark-theme.css') }}">
 
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('home') }}">
-                <i class="fas fa-bullhorn me-2"></i>Brand Voice Codifier
+                <i class="fas fa-bullhorn"></i>Brand Voice
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="{{ url_for('home') }}">
-                            <i class="fas fa-home me-1"></i> Home
+                            Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'document_upload' %}active{% endif %}" href="{{ url_for('document_upload') }}">
-                            <i class="fas fa-file-upload me-1"></i> Document Upload
+                            Documents
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'brand_interview' %}active{% endif %}" href="{{ url_for('brand_interview') }}">
-                            <i class="fas fa-comments me-1"></i> Brand Interview
+                            Interview
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'web_scraper' %}active{% endif %}" href="{{ url_for('web_scraper') }}">
-                            <i class="fas fa-globe me-1"></i> Web Scraper
+                            Web Scraper
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'results' %}active{% endif %}" href="{{ url_for('results') }}">
-                            <i class="fas fa-chart-bar me-1"></i> Results
+                            Results
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'api_settings' %}active{% endif %}" href="{{ url_for('api_settings') }}">
-                            <i class="fas fa-cogs me-1"></i> API Settings
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <form action="{{ url_for('restart') }}" method="post" id="restart-form" class="d-inline">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="button" class="btn btn-danger nav-link border-0" id="restart-button"
-                                    style="background-color: transparent;"
-                                    data-bs-toggle="modal" data-bs-target="#restartModal">
-                                <i class="fas fa-redo-alt me-1"></i> Restart
-                            </button>
-                        </form>
                     </li>
                 </ul>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="me-2" style="font-size: 14px; font-weight: 500;">Cuttable Dev</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('api_settings') }}">
+                                    <i class="fas fa-cogs me-2"></i> API Settings
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{{ url_for('restart') }}" method="post" id="restart-form">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="button" class="dropdown-item text-danger" id="restart-button"
+                                            data-bs-toggle="modal" data-bs-target="#restartModal">
+                                        <i class="fas fa-redo-alt me-2"></i> Restart Application
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -76,13 +89,13 @@
     <div class="modal fade" id="restartModal" tabindex="-1" aria-labelledby="restartModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="restartModalLabel"><i class="fas fa-exclamation-triangle me-2"></i> Confirm Restart</h5>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="restartModalLabel"><i class="fas fa-exclamation-triangle me-2" style="color: var(--error-color);"></i> Confirm Restart</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to restart the application? This will clear all your current data and reset the application to its initial state.</p>
-                    <p class="text-danger"><strong>Warning:</strong> This action cannot be undone.</p>
+                    <p style="color: var(--error-color);"><strong>Warning:</strong> This action cannot be undone.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -109,9 +122,9 @@
         {% block content %}{% endblock %}
     </div>
 
-    <footer class="footer mt-auto py-3 bg-light">
+    <footer class="footer mt-auto py-3">
         <div class="container text-center">
-            <span class="text-muted">Brand Voice Codifier &copy; 2023 | Proof of Concept</span>
+            <span class="text-muted">Brand Voice Codifier &copy; 2023 | Cuttable</span>
         </div>
     </footer>
 
