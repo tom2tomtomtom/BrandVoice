@@ -153,7 +153,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h4>Emotional Tone Profile</h4>
-                                <div class="chart-container" style="position: relative; height:300px; background-color: var(--card-bg); border-radius: var(--border-radius-sm); padding: 10px;">
+                                <div class="chart-container" style="position: relative; height:350px; background-color: var(--card-bg); border-radius: var(--border-radius-sm); padding: 15px;">
                                     <canvas id="emotionalChart"></canvas>
                                 </div>
                             </div>
@@ -368,17 +368,6 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Global Chart.js plugin to set dark background
-        Chart.register({
-            id: 'darkBackground',
-            beforeDraw: (chart) => {
-                const ctx = chart.ctx;
-                ctx.save();
-                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--card-bg');
-                ctx.fillRect(0, 0, chart.width, chart.height);
-                ctx.restore();
-            }
-        });
         // API Sync Button
         const syncApiBtn = document.getElementById('sync-api-btn');
         if (syncApiBtn) {
@@ -413,9 +402,6 @@
 
         // Personality Chart
         const personalityCtx = document.getElementById('personalityChart').getContext('2d');
-        // Fill the background with dark color
-        personalityCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--card-bg');
-        personalityCtx.fillRect(0, 0, personalityCtx.canvas.width, personalityCtx.canvas.height);
         const personalityChart = new Chart(personalityCtx, {
             type: 'radar',
             data: {
@@ -479,9 +465,6 @@
 
         // Emotional Tone Chart
         const emotionalCtx = document.getElementById('emotionalChart').getContext('2d');
-        // Fill the background with dark color
-        emotionalCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--card-bg');
-        emotionalCtx.fillRect(0, 0, emotionalCtx.canvas.width, emotionalCtx.canvas.height);
         const emotionalChart = new Chart(emotionalCtx, {
             type: 'pie',
             data: {
@@ -502,30 +485,44 @@
                            5 if 'reassuring' in brand_parameters.emotional_tone.secondary_emotions else 1 }}
                     ],
                     backgroundColor: [
-                        'rgba(196, 196, 196, 0.7)',
-                        'rgba(169, 169, 169, 0.7)',
-                        'rgba(142, 142, 142, 0.7)',
-                        'rgba(115, 115, 115, 0.7)',
-                        'rgba(88, 88, 88, 0.7)',
-                        'rgba(61, 61, 61, 0.7)'
+                        'rgba(78, 121, 167, 0.7)',  // Blue
+                        'rgba(242, 142, 43, 0.7)',  // Orange
+                        'rgba(225, 87, 89, 0.7)',   // Red
+                        'rgba(118, 183, 178, 0.7)', // Teal
+                        'rgba(89, 161, 79, 0.7)',   // Green
+                        'rgba(140, 85, 140, 0.7)'   // Purple
                     ],
                     borderWidth: 1,
                     borderColor: [
-                        'rgba(196, 196, 196, 1)',
-                        'rgba(169, 169, 169, 1)',
-                        'rgba(142, 142, 142, 1)',
-                        'rgba(115, 115, 115, 1)',
-                        'rgba(88, 88, 88, 1)',
-                        'rgba(61, 61, 61, 1)'
+                        'rgba(78, 121, 167, 1)',    // Blue
+                        'rgba(242, 142, 43, 1)',    // Orange
+                        'rgba(225, 87, 89, 1)',     // Red
+                        'rgba(118, 183, 178, 1)',   // Teal
+                        'rgba(89, 161, 79, 1)',     // Green
+                        'rgba(140, 85, 140, 1)'     // Purple
                     ]
                 }]
             },
             options: {
                 plugins: {
                     legend: {
+                        position: 'right',
                         labels: {
-                            color: 'rgba(255, 255, 255, 0.7)'
+                            color: 'rgba(255, 255, 255, 0.9)',
+                            padding: 15,
+                            font: {
+                                size: 12
+                            },
+                            usePointStyle: true,
+                            pointStyle: 'circle'
                         }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        titleColor: 'rgba(255, 255, 255, 1)',
+                        bodyColor: 'rgba(255, 255, 255, 1)',
+                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                        borderWidth: 1
                     }
                 }
             }
@@ -533,9 +530,6 @@
 
         // Formality Chart
         const formalityCtx = document.getElementById('formalityChart').getContext('2d');
-        // Fill the background with dark color
-        formalityCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--card-bg');
-        formalityCtx.fillRect(0, 0, formalityCtx.canvas.width, formalityCtx.canvas.height);
         const formalityChart = new Chart(formalityCtx, {
             type: 'gauge',
             data: {
@@ -578,9 +572,6 @@
 
         // Communication Style Chart
         const communicationCtx = document.getElementById('communicationChart').getContext('2d');
-        // Fill the background with dark color
-        communicationCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--card-bg');
-        communicationCtx.fillRect(0, 0, communicationCtx.canvas.width, communicationCtx.canvas.height);
         const communicationChart = new Chart(communicationCtx, {
             type: 'bar',
             data: {
