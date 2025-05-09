@@ -46,15 +46,29 @@
                         <label for="url" class="form-label">Enter your website URL</label>
                         <div class="input-with-icon">
                             <i class="fas fa-globe"></i>
-                            <input type="text" class="form-control" id="url" name="website_url" value="example.com" required>
+                            <input type="text" class="form-control" id="url" name="website_url" placeholder="Enter your website URL (e.g., apple.com)" required>
                         </div>
-                        <div class="form-text">Example: example.com (no need to include http:// or https://)</div>
+                        <div class="form-text">Enter your website domain (e.g., apple.com, nike.com). No need to include http:// or https://</div>
                     </div>
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                         <button type="submit" class="btn btn-primary" id="analyze-button">
                             <i class="fas fa-search"></i> Analyze Website
                         </button>
+                    </div>
+
+                    <!-- Progress indicator (hidden by default) -->
+                    <div id="progress-container" class="mt-4 d-none">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-spinner fa-spin me-2"></i> Analysis in Progress</h5>
+                                <div class="progress mb-3">
+                                    <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <div id="progress-status">Initializing...</div>
+                                <div class="small text-muted mt-2">This may take a few minutes depending on the website size and complexity.</div>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -138,11 +152,78 @@
         const urlInput = document.getElementById('url');
         const analyzeButton = document.getElementById('analyze-button');
         const form = document.querySelector('form');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const progressStatus = document.getElementById('progress-status');
 
-        form.addEventListener('submit', function() {
+        // Validate URL as user types
+        urlInput.addEventListener('input', function() {
+            const url = this.value.trim();
+            // Simple regex for domain validation
+            const isValid = /^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/.test(url) ||
+                           /^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)$/.test(url);
+
+            if (url === '') {
+                this.classList.remove('is-valid', 'is-invalid');
+                analyzeButton.disabled = false;
+            } else if (isValid) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+                analyzeButton.disabled = false;
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+                analyzeButton.disabled = true;
+            }
+        });
+
+        form.addEventListener('submit', function(e) {
+            // Validate URL before submission
+            const url = urlInput.value.trim();
+            if (!url) {
+                e.preventDefault();
+                urlInput.classList.add('is-invalid');
+                return false;
+            }
+
             // Show loading state
             analyzeButton.disabled = true;
-            analyzeButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Analyzing...';
+            analyzeButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Initializing...';
+
+            // Show progress container
+            progressContainer.classList.remove('d-none');
+
+            // Simulate progress updates
+            let progress = 0;
+            const progressInterval = setInterval(function() {
+                // Increment progress
+                if (progress < 90) {
+                    progress += Math.random() * 10;
+                    if (progress > 90) progress = 90; // Cap at 90% until complete
+
+                    // Update progress bar
+                    progressBar.style.width = progress + '%';
+
+                    // Update status message based on progress
+                    if (progress < 20) {
+                        progressStatus.innerHTML = 'Connecting to website...';
+                    } else if (progress < 40) {
+                        progressStatus.innerHTML = 'Extracting content from main page...';
+                    } else if (progress < 60) {
+                        progressStatus.innerHTML = 'Finding and analyzing internal pages...';
+                    } else if (progress < 80) {
+                        progressStatus.innerHTML = 'Processing text content...';
+                    } else {
+                        progressStatus.innerHTML = 'Analyzing brand voice patterns...';
+                    }
+                }
+            }, 800);
+
+            // Store the interval ID in sessionStorage so we can clear it if the page is reloaded
+            sessionStorage.setItem('progressInterval', progressInterval);
+
+            // Let the form submit
+            return true;
         });
     });
 </script>

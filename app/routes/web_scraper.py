@@ -177,13 +177,54 @@ def scrape_website(url):
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Extract text from paragraphs, headings, and list items
-        paragraphs = soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'])
-        text = ' '.join([p.get_text().strip() for p in paragraphs])
+        # Extract text from a wider range of elements
+        # Include more elements like div, span, article, section that might contain content
+        content_elements = soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'div', 'span', 'article', 'section', 'blockquote', 'figcaption', 'strong', 'em', 'b', 'i', 'a', 'td', 'th'])
+
+        # Filter out elements with very little text (likely navigation or UI elements)
+        meaningful_elements = []
+        for element in content_elements:
+            # Skip elements with no text
+            if not element.get_text().strip():
+                continue
+
+            # Skip elements that are likely navigation, header, footer, etc.
+            parent_classes = []
+            for parent in element.parents:
+                if parent.has_attr('class'):
+                    parent_classes.extend(parent['class'])
+                if parent.has_attr('id'):
+                    parent_classes.append(parent['id'])
+
+            skip_keywords = ['nav', 'menu', 'footer', 'header', 'sidebar', 'widget', 'cookie', 'popup', 'modal', 'banner']
+            if any(keyword in ' '.join(parent_classes).lower() for keyword in skip_keywords):
+                continue
+
+            # Skip very short text that's likely not meaningful content
+            if len(element.get_text().strip()) < 10 and element.name not in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
+                continue
+
+            meaningful_elements.append(element)
+
+        # Extract text from meaningful elements
+        text = ' '.join([el.get_text().strip() for el in meaningful_elements])
+
+        # Look for specific brand voice related content
+        brand_voice_keywords = ['brand voice', 'tone of voice', 'how we speak', 'our language', 'our voice', 'our tone', 'we are', 'we aren\'t', 'we don\'t', 'words we use', 'words to avoid']
+        brand_voice_elements = []
+
+        for element in soup.find_all(['div', 'section', 'article']):
+            element_text = element.get_text().lower()
+            if any(keyword in element_text for keyword in brand_voice_keywords):
+                brand_voice_elements.append(element.get_text().strip())
+
+        # Add brand voice specific content to the beginning for emphasis
+        if brand_voice_elements:
+            text = ' '.join(brand_voice_elements) + ' ' + text
 
         # Clean the text
         text = re.sub(r'\s+', ' ', text)  # Replace multiple spaces with a single space
-        text = re.sub(r'[^\w\s.,!?;:]', '', text)  # Remove special characters except punctuation
+        text = re.sub(r'[^\w\s.,!?;:\'"-]', '', text)  # Remove special characters except common punctuation
 
         return text
     except Exception as e:
@@ -332,21 +373,53 @@ def get_internal_links(url):
 
         # Find all links
         links = []
+        seen_links = set()  # To track unique links
+
+        # Priority keywords for brand voice related pages
+        priority_keywords = ['about', 'about-us', 'about-our-company', 'mission', 'values', 'culture',
+                           'brand', 'voice', 'tone', 'style', 'guidelines', 'story', 'who-we-are',
+                           'what-we-do', 'company', 'team', 'careers', 'jobs', 'work-with-us']
+
+        priority_links = []
+        regular_links = []
+
         for a_tag in soup.find_all('a', href=True):
             href = a_tag['href']
+
+            # Skip empty links, anchors, javascript, mailto, tel links
+            if not href or href.startswith(('#', 'javascript:', 'mailto:', 'tel:')):
+                continue
 
             # Handle relative URLs
             if href.startswith('/'):
                 href = base_domain + href
             # Handle URLs without protocol
-            elif not href.startswith(('http://', 'https://')) and not href.startswith('#'):
+            elif not href.startswith(('http://', 'https://')):
                 href = base_domain + '/' + href.lstrip('/')
 
-            # Only include internal links
-            if base_url in href and href not in links:
-                links.append(href)
+            # Normalize the URL (remove trailing slash, fragments, etc.)
+            href = href.split('#')[0].split('?')[0].rstrip('/')
 
-        return links[:5]  # Limit to 5 internal links for the POC
+            # Only include internal links that we haven't seen before
+            if base_url in href and href not in seen_links:
+                seen_links.add(href)
+
+                # Check if this is a priority link
+                is_priority = False
+                for keyword in priority_keywords:
+                    if keyword in href.lower():
+                        priority_links.append(href)
+                        is_priority = True
+                        break
+
+                if not is_priority:
+                    regular_links.append(href)
+
+        # Combine priority links first, then regular links
+        links = priority_links + regular_links
+
+        # Return up to 10 links, with priority links first
+        return links[:10]
     except Exception as e:
         flash(f"Error getting internal links: {str(e)}", 'danger')
         return []
@@ -418,15 +491,53 @@ def index():
 
             # Scrape internal pages
             all_text = main_text
+            successful_pages = 1  # Count main page as successful
+            total_pages = 1 + len(internal_links)
+
+            # Track which pages were successfully scraped
+            scraped_pages = ["Main page"]
+
+            # Set a maximum text length to avoid overwhelming the API
+            max_text_length = 100000  # 100K characters should be enough for analysis
+            current_text_length = len(main_text)
 
             for i, link in enumerate(internal_links):
+                # Check if we've already collected enough text
+                if current_text_length >= max_text_length:
+                    print(f"Reached maximum text length ({max_text_length} characters). Stopping scraping.")
+                    break
+
                 print(f"Scraping internal link {i+1}/{len(internal_links)}: {link}")
                 page_text = scrape_website(link)
+
                 if page_text:
                     print(f"Internal link text length: {len(page_text)} characters")
+
+                    # Add the page text to our collection
                     all_text += " " + page_text
+                    current_text_length += len(page_text)
+                    successful_pages += 1
+
+                    # Extract page title or use URL
+                    page_title = link.replace(website_url, '').strip('/') or link
+                    scraped_pages.append(page_title)
+
+                    # If we've reached the maximum text length, stop scraping
+                    if current_text_length >= max_text_length:
+                        print(f"Reached maximum text length ({max_text_length} characters). Stopping scraping.")
+                        break
                 else:
                     print(f"Failed to extract text from internal link: {link}")
+
+            # Add scraping statistics to the analysis results
+            scraping_stats = {
+                "pages_scraped": successful_pages,
+                "total_pages_attempted": total_pages,
+                "success_rate": round((successful_pages / total_pages) * 100),
+                "total_text_length": len(all_text),
+                "scraped_pages": scraped_pages
+            }
+            print(f"Scraping statistics: {scraping_stats}")
 
             # Analyze the combined text
             # Import the text analyzer with API support
@@ -435,6 +546,13 @@ def index():
             try:
                 print(f"Using {session['api_settings']['api_provider']} API for web content analysis")
                 analysis_results = api_analyze_text(all_text)
+
+                # Add scraping statistics to the analysis results
+                if 'scraping_metadata' not in analysis_results:
+                    analysis_results['scraping_metadata'] = {}
+
+                analysis_results['scraping_metadata'] = scraping_stats
+
             except Exception as e:
                 flash(f'API analysis failed: {str(e)}', 'danger')
                 return redirect(url_for('api_settings'))
