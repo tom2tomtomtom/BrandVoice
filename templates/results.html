@@ -108,7 +108,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h4>Brand Personality Profile</h4>
-                                <div class="chart-container" style="position: relative; height:300px;">
+                                <div class="chart-container" style="position: relative; height:300px; background-color: var(--card-bg); border-radius: var(--border-radius-sm); padding: 10px;">
                                     <canvas id="personalityChart"></canvas>
                                 </div>
                             </div>
@@ -153,7 +153,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h4>Emotional Tone Profile</h4>
-                                <div class="chart-container" style="position: relative; height:300px;">
+                                <div class="chart-container" style="position: relative; height:300px; background-color: var(--card-bg); border-radius: var(--border-radius-sm); padding: 10px;">
                                     <canvas id="emotionalChart"></canvas>
                                 </div>
                             </div>
@@ -202,7 +202,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h4>Formality Level</h4>
-                                <div class="chart-container" style="position: relative; height:300px;">
+                                <div class="chart-container" style="position: relative; height:300px; background-color: var(--card-bg); border-radius: var(--border-radius-sm); padding: 10px;">
                                     <canvas id="formalityChart"></canvas>
                                 </div>
                             </div>
@@ -292,7 +292,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h4>Communication Style Profile</h4>
-                                <div class="chart-container" style="position: relative; height:300px;">
+                                <div class="chart-container" style="position: relative; height:300px; background-color: var(--card-bg); border-radius: var(--border-radius-sm); padding: 10px;">
                                     <canvas id="communicationChart"></canvas>
                                 </div>
                             </div>
@@ -436,10 +436,28 @@
                 scales: {
                     r: {
                         angleLines: {
-                            display: true
+                            display: true,
+                            color: 'rgba(196, 196, 196, 0.2)'
+                        },
+                        grid: {
+                            color: 'rgba(196, 196, 196, 0.2)'
+                        },
+                        ticks: {
+                            backdropColor: 'transparent',
+                            color: 'rgba(196, 196, 196, 0.7)'
+                        },
+                        pointLabels: {
+                            color: 'rgba(255, 255, 255, 0.7)'
                         },
                         suggestedMin: 0,
                         suggestedMax: 10
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
                     }
                 }
             }
@@ -474,8 +492,25 @@
                         'rgba(88, 88, 88, 0.7)',
                         'rgba(61, 61, 61, 0.7)'
                     ],
-                    borderWidth: 1
+                    borderWidth: 1,
+                    borderColor: [
+                        'rgba(196, 196, 196, 1)',
+                        'rgba(169, 169, 169, 1)',
+                        'rgba(142, 142, 142, 1)',
+                        'rgba(115, 115, 115, 1)',
+                        'rgba(88, 88, 88, 1)',
+                        'rgba(61, 61, 61, 1)'
+                    ]
                 }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    }
+                }
             }
         });
 
@@ -511,7 +546,13 @@
                         top: 10,
                         bottom: 10
                     }
-                }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                backgroundColor: 'rgba(30, 30, 30, 1)'
             }
         });
 
@@ -545,7 +586,28 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 10
+                        max: 10,
+                        grid: {
+                            color: 'rgba(196, 196, 196, 0.1)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(196, 196, 196, 0.1)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
                     }
                 }
             }
