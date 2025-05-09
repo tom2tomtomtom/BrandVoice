@@ -368,6 +368,24 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Global Chart.js plugin to set dark background
+        Chart.defaults.plugins.legend.labels.color = 'rgba(255, 255, 255, 0.9)';
+        Chart.defaults.color = 'rgba(255, 255, 255, 0.9)';
+        Chart.defaults.scale.grid.color = 'rgba(255, 255, 255, 0.1)';
+
+        // Register a plugin that runs before each chart is drawn to ensure dark background
+        Chart.register({
+            id: 'darkBackground',
+            beforeDraw: (chart) => {
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--card-bg');
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.restore();
+            }
+        });
+
         // API Sync Button
         const syncApiBtn = document.getElementById('sync-api-btn');
         if (syncApiBtn) {
