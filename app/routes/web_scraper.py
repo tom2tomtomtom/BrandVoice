@@ -23,9 +23,11 @@ def scrape_website(url):
         def init_poolmanager(self, *args, **kwargs):
             context = create_urllib3_context(ciphers=None)
             context.options |= (ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3 | ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1)
+            # Completely disable hostname checking and certificate verification
             context.check_hostname = False
             context.verify_mode = ssl.CERT_NONE
             kwargs['ssl_context'] = context
+            kwargs['assert_hostname'] = False  # Disable hostname assertion
             return super(SSLAdapter, self).init_poolmanager(*args, **kwargs)
 
     try:
@@ -50,41 +52,79 @@ def scrape_website(url):
         except (requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
             print(f"SSL/Connection Error with custom adapter: {str(e)}")
 
-            # Try with HTTP if HTTPS fails
-            if url.startswith('https://'):
-                http_url = 'http://' + url[8:]
-                print(f"Retrying with HTTP: {http_url}")
+            # Check if it's a hostname mismatch error
+            if "Hostname mismatch" in str(e) or "certificate verify failed" in str(e):
+                print("Detected hostname mismatch or certificate verification error")
+                # Try with a more aggressive approach to bypass SSL
                 try:
-                    response = session.get(http_url, headers=headers, timeout=15, verify=False)
-                    print(f"HTTP Response status code: {response.status_code}")
-                    response.raise_for_status()
-                    print("HTTP Response successful")
-                except Exception as http_e:
-                    print(f"HTTP retry failed: {str(http_e)}")
+                    print("Trying with urllib and completely unverified SSL context")
+                    import urllib.request
+                    context = ssl._create_unverified_context()
+                    req = urllib.request.Request(url, headers=headers)
+                    with urllib.request.urlopen(req, context=context, timeout=20) as response_obj:
+                        response_text = response_obj.read().decode('utf-8')
 
-                    # Last resort: try with a completely different approach
-                    print("Trying with a completely different approach...")
-                    try:
-                        # Try with a different library if available
-                        import urllib.request
-                        context = ssl._create_unverified_context()
-                        req = urllib.request.Request(url, headers=headers)
-                        with urllib.request.urlopen(req, context=context, timeout=20) as response_obj:
-                            response_text = response_obj.read().decode('utf-8')
+                    # Create a mock response object with the text
+                    class MockResponse:
+                        def __init__(self, text):
+                            self.text = text
+                            self.status_code = 200
 
-                        # Create a mock response object with the text
-                        class MockResponse:
-                            def __init__(self, text):
-                                self.text = text
-                                self.status_code = 200
+                    response = MockResponse(response_text)
+                    print("Alternative approach with urllib successful")
+                except Exception as urllib_e:
+                    print(f"urllib approach failed: {str(urllib_e)}")
 
-                        response = MockResponse(response_text)
-                        print("Alternative approach successful")
-                    except Exception as alt_e:
-                        print(f"Alternative approach failed: {str(alt_e)}")
+                    # Try with HTTP if HTTPS fails
+                    if url.startswith('https://'):
+                        http_url = 'http://' + url[8:]
+                        print(f"Retrying with HTTP: {http_url}")
+                        try:
+                            response = session.get(http_url, headers=headers, timeout=15, verify=False)
+                            print(f"HTTP Response status code: {response.status_code}")
+                            response.raise_for_status()
+                            print("HTTP Response successful")
+                        except Exception as http_e:
+                            print(f"HTTP retry failed: {str(http_e)}")
+                            raise
+                    else:
                         raise
             else:
-                raise
+                # Try with HTTP if HTTPS fails
+                if url.startswith('https://'):
+                    http_url = 'http://' + url[8:]
+                    print(f"Retrying with HTTP: {http_url}")
+                    try:
+                        response = session.get(http_url, headers=headers, timeout=15, verify=False)
+                        print(f"HTTP Response status code: {response.status_code}")
+                        response.raise_for_status()
+                        print("HTTP Response successful")
+                    except Exception as http_e:
+                        print(f"HTTP retry failed: {str(http_e)}")
+
+                        # Last resort: try with a completely different approach
+                        print("Trying with a completely different approach...")
+                        try:
+                            # Try with a different library if available
+                            import urllib.request
+                            context = ssl._create_unverified_context()
+                            req = urllib.request.Request(url, headers=headers)
+                            with urllib.request.urlopen(req, context=context, timeout=20) as response_obj:
+                                response_text = response_obj.read().decode('utf-8')
+
+                            # Create a mock response object with the text
+                            class MockResponse:
+                                def __init__(self, text):
+                                    self.text = text
+                                    self.status_code = 200
+
+                            response = MockResponse(response_text)
+                            print("Alternative approach successful")
+                        except Exception as alt_e:
+                            print(f"Alternative approach failed: {str(alt_e)}")
+                            raise
+                else:
+                    raise
         except requests.exceptions.Timeout as e:
             print(f"Timeout Error: {str(e)}")
             # Try again with a longer timeout
@@ -127,9 +167,11 @@ def get_internal_links(url):
             def init_poolmanager(self, *args, **kwargs):
                 context = create_urllib3_context(ciphers=None)
                 context.options |= (ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3 | ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1)
+                # Completely disable hostname checking and certificate verification
                 context.check_hostname = False
                 context.verify_mode = ssl.CERT_NONE
                 kwargs['ssl_context'] = context
+                kwargs['assert_hostname'] = False  # Disable hostname assertion
                 return super(SSLAdapter, self).init_poolmanager(*args, **kwargs)
 
         headers = {
@@ -152,16 +194,58 @@ def get_internal_links(url):
         except (requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
             print(f"SSL/Connection Error with custom adapter: {str(e)}")
 
-            # Try with HTTP if HTTPS fails
-            if url.startswith('https://'):
-                http_url = 'http://' + url[8:]
-                print(f"Retrying with HTTP: {http_url}")
-                response = session.get(http_url, headers=headers, timeout=15, verify=False)
-                print(f"HTTP Response status code: {response.status_code}")
-                response.raise_for_status()
-                print("HTTP Response successful")
+            # Check if it's a hostname mismatch error
+            if "Hostname mismatch" in str(e) or "certificate verify failed" in str(e):
+                print("Detected hostname mismatch or certificate verification error")
+                # Try with a more aggressive approach to bypass SSL
+                try:
+                    print("Trying with urllib and completely unverified SSL context")
+                    import urllib.request
+                    context = ssl._create_unverified_context()
+                    req = urllib.request.Request(url, headers=headers)
+                    with urllib.request.urlopen(req, context=context, timeout=20) as response_obj:
+                        response_text = response_obj.read().decode('utf-8')
+
+                    # Create a mock response object with the text
+                    class MockResponse:
+                        def __init__(self, text):
+                            self.text = text
+                            self.status_code = 200
+
+                    response = MockResponse(response_text)
+                    print("Alternative approach with urllib successful")
+                except Exception as urllib_e:
+                    print(f"urllib approach failed: {str(urllib_e)}")
+
+                    # Try with HTTP if HTTPS fails
+                    if url.startswith('https://'):
+                        http_url = 'http://' + url[8:]
+                        print(f"Retrying with HTTP: {http_url}")
+                        try:
+                            response = session.get(http_url, headers=headers, timeout=15, verify=False)
+                            print(f"HTTP Response status code: {response.status_code}")
+                            response.raise_for_status()
+                            print("HTTP Response successful")
+                        except Exception as http_e:
+                            print(f"HTTP retry failed: {str(http_e)}")
+                            raise
+                    else:
+                        raise
             else:
-                raise
+                # Try with HTTP if HTTPS fails
+                if url.startswith('https://'):
+                    http_url = 'http://' + url[8:]
+                    print(f"Retrying with HTTP: {http_url}")
+                    try:
+                        response = session.get(http_url, headers=headers, timeout=15, verify=False)
+                        print(f"HTTP Response status code: {response.status_code}")
+                        response.raise_for_status()
+                        print("HTTP Response successful")
+                    except Exception as http_e:
+                        print(f"HTTP retry failed: {str(http_e)}")
+                        raise
+                else:
+                    raise
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
