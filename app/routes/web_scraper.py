@@ -81,7 +81,7 @@ def index():
             flash(f"Error scraping website: {str(e)}", 'danger')
             return redirect(url_for('web_scraper_bp.index'))
 
-        if main_text:
+        if main_text and len(main_text.strip()) > 0:
             # Get internal links
             print("Getting internal links")
             internal_links = get_internal_links(website_url)
