@@ -10,7 +10,7 @@ from app.utils.session_manager import get_brand_parameters, update_input_method,
 from app.utils.text_analyzer import update_brand_parameters as update_params_from_analysis
 from app.utils.web_unlocker import fetch_with_web_unlocker
 
-web_scraper_bp = Blueprint('web_scraper', __name__)
+web_scraper_bp = Blueprint('web_scraper_bp', __name__)
 
 def scrape_website(url):
     """Scrape text content from a website"""
@@ -483,6 +483,13 @@ def index():
         flash('API integration is required for brand voice analysis. Please configure API settings.', 'danger')
         return redirect(url_for('api_settings'))
 
+    # Get Brightdata settings
+    brightdata_settings = session.get('brightdata_settings', {
+        'api_key': '',
+        'zone': 'web_unlocker1',
+        'enabled': False
+    })
+
     if request.method == 'POST':
         # Print all form data for debugging
         print("Form data received:")
@@ -636,11 +643,50 @@ def index():
             update_input_method('web_scraper', True, analysis_results)
 
             flash('Website analyzed successfully!', 'success')
-            return redirect(url_for('web_scraper.results'))
+            return redirect(url_for('web_scraper_bp.results'))
         else:
             flash('Could not extract text from the website. Please check the URL and try again.', 'danger')
 
-    return render_template('web_scraper/index.html')
+    # Check if we're handling Brightdata settings update
+    if request.method == 'POST' and 'brightdata_form' in request.form:
+        # Get settings from form
+        api_key = request.form.get('api_key', '')
+        zone = request.form.get('zone', 'web_unlocker1')
+        enabled = 'enabled' in request.form
+
+        # Update session
+        session['brightdata_settings']['api_key'] = api_key
+        session['brightdata_settings']['zone'] = zone
+        session['brightdata_settings']['enabled'] = enabled
+        session.modified = True
+
+        # Log the settings (mask the API key)
+        print(f"Brightdata settings saved: API Key: {'*' * len(api_key) if api_key else 'None'}, Zone: {zone}, Enabled: {enabled}")
+
+        # Update the web_unlocker instance with the new API key
+        if api_key:
+            try:
+                from app.utils.web_unlocker import web_unlocker
+                web_unlocker.api_key = api_key
+                web_unlocker.zone = zone
+
+                # Test the connection if enabled
+                if enabled:
+                    success, content = web_unlocker.fetch_url('https://example.com')
+                    if success:
+                        flash('Brightdata Web Unlocker API key saved and verified successfully!', 'success')
+                    else:
+                        flash(f'Brightdata API key saved but verification failed: {content}', 'warning')
+                else:
+                    flash('Brightdata settings saved. Web Unlocker API is disabled.', 'info')
+            except Exception as e:
+                flash(f'Error configuring Brightdata Web Unlocker: {str(e)}', 'danger')
+        else:
+            flash('Brightdata settings cleared.', 'info')
+
+        return redirect(url_for('web_scraper_bp.index'))
+
+    return render_template('web_scraper/index.html', brightdata_settings=brightdata_settings)
 
 @web_scraper_bp.route('/web-scraper/results')
 def results():
@@ -650,7 +696,7 @@ def results():
     # Check if web scraper has been used
     if not input_methods['web_scraper']['used']:
         flash('Please analyze a website first.', 'warning')
-        return redirect(url_for('web_scraper.index'))
+        return redirect(url_for('web_scraper_bp.index'))
 
     # Get analysis results
     analysis_results = input_methods['web_scraper']['data']

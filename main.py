@@ -28,6 +28,10 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-key-for-brand-voice
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
 
+# Register blueprints
+from app.routes.web_scraper import web_scraper_bp
+app.register_blueprint(web_scraper_bp, url_prefix='/web-scraper')
+
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
@@ -540,104 +544,10 @@ def brand_interview():
 def simple_form():
     return render_template('simple_form.html')
 
-@app.route('/web-scraper', methods=['GET', 'POST'])
-def web_scraper():
-    print("\n\n==== WEB SCRAPER ROUTE CALLED ====")
-    print(f"Request method: {request.method}")
-
-    try:
-        initialize_session()
-        print("Session initialized")
-    except Exception as e:
-        print(f"Error initializing session: {str(e)}")
-
-    if request.method == 'POST':
-        try:
-            # Print all form data for debugging
-            print("Form data received in main.py:")
-            for key, value in request.form.items():
-                print(f"  {key}: {value}")
-
-            # Get the website URL from the form
-            website_url = request.form.get('website_url', '')
-
-            # Print raw value
-            print(f"Raw website URL value: '{website_url}'")
-
-            # Strip whitespace
-            website_url = website_url.strip()
-            print(f"After stripping whitespace: '{website_url}'")
-
-            # Check if URL is empty
-            if not website_url:
-                print("URL is empty after stripping whitespace")
-                flash('Please enter a website URL', 'danger')
-                return redirect(request.url)
-        except Exception as e:
-            print(f"Error processing form data: {str(e)}")
-            return f"Error processing form: {str(e)}"
-
-        # Add http:// if not present
-        if not website_url.startswith(('http://', 'https://')):
-            website_url = 'https://' + website_url
-
-        try:
-            # Scrape the website
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
-            response = requests.get(website_url, headers=headers, timeout=10)
-            response.raise_for_status()
-
-            soup = BeautifulSoup(response.text, 'html.parser')
-
-            # Extract text from paragraphs, headings, and list items
-            paragraphs = soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'])
-            text = ' '.join([p.get_text().strip() for p in paragraphs])
-
-            # Clean the text
-            text = re.sub(r'\s+', ' ', text)  # Replace multiple spaces with a single space
-            text = re.sub(r'[^\w\s.,!?;:]', '', text)  # Remove special characters except punctuation
-
-            if text:
-                # Analyze the text
-                # Check if API integration is enabled
-                if not session['api_settings'].get('integration_enabled', False) or not session['api_settings'].get('api_key'):
-                    flash('API integration is required for text analysis. Please configure API settings.', 'danger')
-                    return redirect(url_for('api_settings'))
-
-                # Import the text analyzer with API support
-                from app.utils.text_analyzer import analyze_text as api_analyze_text
-
-                try:
-                    print(f"Using {session['api_settings']['api_provider']} API for web content analysis")
-                    analysis_results = api_analyze_text(text)
-                except Exception as e:
-                    flash(f'API analysis failed: {str(e)}', 'danger')
-                    return redirect(url_for('api_settings'))
-
-                # First update the parameters using the text analyzer function
-                from app.utils.text_analyzer import update_brand_parameters as update_params_from_analysis
-                from app.utils.session_manager import get_brand_parameters, update_brand_parameters as update_session_parameters
-                brand_parameters = get_brand_parameters()
-                updated_parameters = update_params_from_analysis(brand_parameters, analysis_results)
-
-                # Then use the session manager function to merge with method name
-                update_session_parameters(updated_parameters, method_name="web_scraper")
-
-                # Mark web scraper as used
-                session['input_methods']['web_scraper']['used'] = True
-                session['input_methods']['web_scraper']['data'] = analysis_results
-                session.modified = True
-
-                flash('Website analyzed successfully!', 'success')
-                return redirect(url_for('results'))
-            else:
-                flash('Could not extract text from the website.', 'danger')
-        except Exception as e:
-            flash(f'Error scraping website: {str(e)}', 'danger')
-
-    return render_template('web_scraper.html')
+@app.route('/web-scraper')
+def web_scraper_redirect():
+    """Redirect old web scraper URL to the new blueprint route"""
+    return redirect(url_for('web_scraper_bp.index'))
 
 @app.route('/results')
 def results():
@@ -822,58 +732,10 @@ def api_settings():
 
     return render_template('api_settings.html', api_settings=session['api_settings'])
 
-@app.route('/brightdata_settings', methods=['GET', 'POST'])
-def brightdata_settings():
-    initialize_session()
-
-    # Initialize brightdata settings if not present
-    if 'brightdata_settings' not in session:
-        session['brightdata_settings'] = {
-            'api_key': '',
-            'zone': 'web_unlocker1',
-            'enabled': False
-        }
-        session.modified = True
-
-    if request.method == 'POST':
-        # Get settings from form
-        api_key = request.form.get('api_key', '')
-        zone = request.form.get('zone', 'web_unlocker1')
-        enabled = 'enabled' in request.form
-
-        # Update session
-        session['brightdata_settings']['api_key'] = api_key
-        session['brightdata_settings']['zone'] = zone
-        session['brightdata_settings']['enabled'] = enabled
-        session.modified = True
-
-        # Log the settings (mask the API key)
-        print(f"Brightdata settings saved: API Key: {'*' * len(api_key) if api_key else 'None'}, Zone: {zone}, Enabled: {enabled}")
-
-        # Update the web_unlocker instance with the new API key
-        if api_key:
-            try:
-                from app.utils.web_unlocker import web_unlocker
-                web_unlocker.api_key = api_key
-                web_unlocker.zone = zone
-
-                # Test the connection if enabled
-                if enabled:
-                    success, content = web_unlocker.fetch_url('https://example.com')
-                    if success:
-                        flash('Brightdata Web Unlocker API key saved and verified successfully!', 'success')
-                    else:
-                        flash(f'Brightdata API key saved but verification failed: {content}', 'warning')
-                else:
-                    flash('Brightdata settings saved. Web Unlocker API is disabled.', 'info')
-            except Exception as e:
-                flash(f'Error configuring Brightdata Web Unlocker: {str(e)}', 'danger')
-        else:
-            flash('Brightdata settings cleared.', 'info')
-
-        return redirect(url_for('brightdata_settings'))
-
-    return render_template('brightdata_settings.html', brightdata_settings=session.get('brightdata_settings', {}))
+@app.route('/brightdata_settings')
+def brightdata_settings_redirect():
+    """Redirect old brightdata settings URL to the new web scraper page"""
+    return redirect(url_for('web_scraper_bp.index'))
 
 @app.route('/api/sync', methods=['POST'])
 def api_sync():

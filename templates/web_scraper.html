@@ -40,7 +40,7 @@
                     </div>
                 </div>
 
-                <form action="{{ url_for('web_scraper') }}" method="post" class="mt-4">
+                <form action="{{ url_for('web_scraper_bp.index') }}" method="post" class="mt-4">
                     <!-- Simple test form -->
                     <div class="form-group">
                         <label for="url" class="form-label">Enter your website URL</label>
@@ -108,6 +108,90 @@
                 <i class="fas fa-cogs icon-accent feature-card-icon"></i>
                 <h5 class="card-title">Parameter Extraction</h5>
                 <p class="card-text">Key brand voice parameters are identified and quantified.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header card-header-feature">
+                <h3 class="h5 mb-0"><i class="fas fa-unlock-alt icon-primary me-2"></i> Advanced Web Scraping Settings</h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="info-card">
+                            <h5><i class="fas fa-info-circle icon-accent me-2"></i> About Web Unlocker</h5>
+                            <p>The Brightdata Web Unlocker API helps access websites that are difficult to scrape due to:</p>
+                            <ul>
+                                <li>Anti-bot protection</li>
+                                <li>CAPTCHA challenges</li>
+                                <li>IP blocking</li>
+                                <li>SSL certificate issues</li>
+                                <li>JavaScript-rendered content</li>
+                            </ul>
+                            <p>This is an optional service that requires a Brightdata account and API key.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-card">
+                            <h5><i class="fas fa-cogs icon-accent me-2"></i> How It Works</h5>
+                            <p>When enabled, the Web Unlocker API will be used as a fallback when our regular scraping methods fail. It provides:</p>
+                            <ul>
+                                <li>Automatic CAPTCHA solving</li>
+                                <li>Browser fingerprint emulation</li>
+                                <li>IP rotation from residential networks</li>
+                                <li>JavaScript rendering</li>
+                                <li>Cookie and header management</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <form action="{{ url_for('web_scraper_bp.index') }}" method="post" class="mt-4">
+                    <input type="hidden" name="brightdata_form" value="1">
+                    <div class="form-group mb-4">
+                        <label for="api_key" class="form-label">Brightdata API Key</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-key"></i>
+                            <input type="password" class="form-control" id="api_key" name="api_key"
+                                value="{{ brightdata_settings.api_key if brightdata_settings and brightdata_settings.api_key else '' }}"
+                                placeholder="Enter your Brightdata Web Unlocker API key">
+                        </div>
+                        <div class="form-text">Your API key can be found in your Brightdata dashboard.</div>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label for="zone" class="form-label">Zone Name (Optional)</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-globe"></i>
+                            <input type="text" class="form-control" id="zone" name="zone"
+                                value="{{ brightdata_settings.zone if brightdata_settings and brightdata_settings.zone else 'web_unlocker1' }}"
+                                placeholder="Enter your Brightdata zone name">
+                        </div>
+                        <div class="form-text">Default is "web_unlocker1". Change only if you have a custom zone.</div>
+                    </div>
+
+                    <div class="form-check form-switch mb-4">
+                        <input class="form-check-input" type="checkbox" id="enabled" name="enabled"
+                            {% if brightdata_settings and brightdata_settings.enabled %}checked{% endif %}>
+                        <label class="form-check-label" for="enabled">Enable Brightdata Web Unlocker API</label>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Note:</strong> Using the Brightdata Web Unlocker API may incur additional costs based on your Brightdata account plan.
+                        The API will only be used as a fallback when regular scraping methods fail.
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
