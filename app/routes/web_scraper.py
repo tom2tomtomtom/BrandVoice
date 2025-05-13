@@ -192,7 +192,7 @@ def index():
             update_input_method('web_scraper', True, analysis_results)
 
             flash('Website analyzed successfully!', 'success')
-            return redirect(url_for('web_scraper_bp.results'))
+            return redirect(url_for('results'))
 
         # For all other websites, proceed with normal scraping
         print("Starting to scrape the main URL")
