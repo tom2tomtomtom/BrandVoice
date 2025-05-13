@@ -90,6 +90,14 @@ def index():
                 "formality": {
                     "level": 4
                 },
+                "formality_score": 4,
+                "avg_sentence_length": 12,
+                "sentence_complexity": 3,
+                "rich_descriptions": [
+                    "WE ARE LNDR AND WE'RE HERE TO CUT THROUGH THE BLLSHT.",
+                    "We're grounded, honest and clear. We're witty and unafraid. We're no-bullshit, but we're positive without being toxic. We're respectful and sensual.",
+                    "We're not afraid to use swear words, but we don't overuse them. We use them for emphasis, not as filler."
+                ],
                 "vocabulary": {
                     "preferred_terms": [
                         "Cut through the bllsht",
@@ -116,6 +124,30 @@ def index():
                         "Luxury"
                     ]
                 },
+                "common_vocabulary": [
+                    ["Cut through the bllsht", 10],
+                    ["No-nonsense", 9],
+                    ["Honest", 8],
+                    ["Real", 7],
+                    ["Authentic", 6],
+                    ["Quality", 5],
+                    ["Craftsmanship", 4],
+                    ["Performance", 3],
+                    ["Comfort", 2],
+                    ["Confidence", 1]
+                ],
+                "avoided_terms": [
+                    "Perfect",
+                    "Revolutionary",
+                    "Game-changing",
+                    "Disruptive",
+                    "Innovative",
+                    "Cutting-edge",
+                    "Best-in-class",
+                    "World-class",
+                    "Premium",
+                    "Luxury"
+                ],
                 "communication_style": {
                     "key_phrases": [
                         "We make clothes that work as hard as you do.",
