@@ -236,8 +236,8 @@
                             // Redirect after a short delay to show 100%
                             setTimeout(function() {
                                 // Extract the redirect URL from the response if possible
-                                // For simplicity, we'll just redirect to the results page
-                                window.location.href = "{{ url_for('results') }}";
+                                // Redirect to the dashboard to show completion status
+                                window.location.href = "{{ url_for('home') }}";
                             }, 500);
                         } else {
                             // Handle JSON response or other formats if needed

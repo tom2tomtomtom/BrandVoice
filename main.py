@@ -445,8 +445,8 @@ def document_upload():
                         print("Document upload marked as used:", session['input_methods']['document_upload']['used'])
                         print("Document upload timestamp:", session['input_methods']['document_upload']['timestamp'])
 
-                        flash('Document analyzed successfully!', 'success')
-                        return redirect(url_for('results'))
+                        flash('Document analyzed successfully! You can now view the results.', 'success')
+                        return redirect(url_for('home'))
                     except Exception as e:
                         flash(f'Error analyzing document: {str(e)}', 'danger')
                         print(f"Text analysis error: {str(e)}")
