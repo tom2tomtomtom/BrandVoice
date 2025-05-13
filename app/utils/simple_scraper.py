@@ -14,6 +14,80 @@ def scrape_website(url):
     import sys
     import traceback
 
+    # Check if this is a known problematic domain that requires special handling
+    problematic_domains = ['ldnr.com', 'au.ldnr.com', 'lndr.com']
+    if any(domain in url.lower() for domain in problematic_domains):
+        print(f"Detected problematic domain in URL: {url}")
+        # For these domains, try Brightdata Web Unlocker first if it's configured
+        if web_unlocker.is_configured():
+            print("Using Brightdata Web Unlocker API as primary method for this domain...")
+            try:
+                success, content = fetch_with_web_unlocker(url)
+                if success and content:
+                    print("Brightdata Web Unlocker API successful")
+                    # Process the content
+                    soup = BeautifulSoup(content, 'html.parser')
+
+                    # Extract text from a wider range of elements
+                    content_elements = soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'div', 'span', 'article', 'section', 'blockquote', 'figcaption', 'strong', 'em', 'b', 'i', 'a', 'td', 'th'])
+
+                    # Filter out elements with very little text
+                    meaningful_elements = []
+                    for element in content_elements:
+                        # Skip elements with no text
+                        if not element.get_text().strip():
+                            continue
+
+                        # Skip elements that are likely navigation, header, footer, etc.
+                        parent_classes = []
+                        for parent in element.parents:
+                            if parent.has_attr('class'):
+                                parent_classes.extend(parent['class'])
+                            if parent.has_attr('id'):
+                                parent_classes.append(parent['id'])
+
+                        skip_keywords = ['nav', 'menu', 'footer', 'header', 'sidebar', 'widget', 'cookie', 'popup', 'modal', 'banner']
+                        if any(keyword in ' '.join(parent_classes).lower() for keyword in skip_keywords):
+                            continue
+
+                        # Skip very short text that's likely not meaningful content
+                        if len(element.get_text().strip()) < 10 and element.name not in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
+                            continue
+
+                        meaningful_elements.append(element)
+
+                    # Extract text from meaningful elements
+                    text = ' '.join([el.get_text().strip() for el in meaningful_elements])
+
+                    # Look for specific brand voice related content
+                    brand_voice_keywords = ['brand voice', 'tone of voice', 'how we speak', 'our language', 'our voice', 'our tone', 'we are', 'we aren\'t', 'we don\'t', 'words we use', 'words to avoid']
+                    brand_voice_elements = []
+
+                    for element in soup.find_all(['div', 'section', 'article']):
+                        element_text = element.get_text().lower()
+                        if any(keyword in element_text for keyword in brand_voice_keywords):
+                            brand_voice_elements.append(element.get_text().strip())
+
+                    # Add brand voice specific content to the beginning for emphasis
+                    if brand_voice_elements:
+                        text = ' '.join(brand_voice_elements) + ' ' + text
+
+                    # Clean the text
+                    import re
+                    text = re.sub(r'\s+', ' ', text)  # Replace multiple spaces with a single space
+                    text = re.sub(r'[^\w\s.,!?;:\'"-]', '', text)  # Remove special characters except common punctuation
+
+                    print(f"Extracted text length using Brightdata: {len(text)} characters")
+                    if len(text) > 0:
+                        return text
+                    else:
+                        print("No text extracted using Brightdata. Falling back to standard methods.")
+                else:
+                    print(f"Brightdata Web Unlocker API failed: {content}")
+            except Exception as unlocker_e:
+                print(f"Brightdata Web Unlocker API failed: {str(unlocker_e)}")
+                print(f"Brightdata traceback: {traceback.format_exc()}")
+
     # Suppress all SSL warnings
     urllib3.disable_warnings()
 
