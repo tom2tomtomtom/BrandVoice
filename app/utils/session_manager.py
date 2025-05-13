@@ -1,8 +1,13 @@
 from flask import session
 
-def initialize_brand_parameters():
-    """Initialize brand parameters in session if not already present"""
-    if 'brand_parameters' not in session:
+def initialize_brand_parameters(reset=False):
+    """
+    Initialize brand parameters in session if not already present
+
+    Args:
+        reset: If True, reset all parameters even if they already exist
+    """
+    if 'brand_parameters' not in session or reset:
         session['brand_parameters'] = {
             "personality": {
                 "primary_traits": [],
@@ -42,7 +47,7 @@ def initialize_brand_parameters():
             }
         }
 
-    if 'input_methods' not in session:
+    if 'input_methods' not in session or reset:
         session['input_methods'] = {
             "document_upload": {"used": False, "data": {}},
             "brand_interview": {"used": False, "data": {}},

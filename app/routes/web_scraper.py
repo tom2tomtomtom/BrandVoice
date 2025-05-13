@@ -180,6 +180,10 @@ def index():
             # Add scraping statistics to the analysis results
             analysis_results['scraping_metadata'] = scraping_stats
 
+            # Clear any previous input methods to ensure we only see LNDR results
+            from app.utils.session_manager import initialize_brand_parameters
+            initialize_brand_parameters(reset=True)
+
             # Update brand parameters
             brand_parameters = get_brand_parameters()
             updated_parameters = update_params_from_analysis(brand_parameters, analysis_results)
@@ -192,7 +196,7 @@ def index():
             update_input_method('web_scraper', True, analysis_results)
 
             flash('Website analyzed successfully!', 'success')
-            return redirect(url_for('results'))
+            return redirect(url_for('web_scraper_bp.results'))
 
         # For all other websites, proceed with normal scraping
         print("Starting to scrape the main URL")
