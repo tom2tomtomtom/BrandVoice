@@ -285,6 +285,17 @@ def generate_example_copy(parameters):
 @app.route('/')
 def home():
     initialize_session()
+
+    # Debug session data
+    print("\nHome route - Session data:")
+    print(f"Document upload used: {session['input_methods']['document_upload'].get('used', False)}")
+    print(f"Document upload timestamp: {session['input_methods']['document_upload'].get('timestamp', 'None')}")
+    print(f"Web scraper used: {session['input_methods']['web_scraper'].get('used', False)}")
+    print(f"Brand interview used: {session['input_methods']['brand_interview'].get('used', False)}")
+
+    # Make sure session is saved
+    session.modified = True
+
     return render_template('index.html', input_methods=session['input_methods'])
 
 @app.route('/restart', methods=['POST'])
