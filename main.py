@@ -737,6 +737,18 @@ def brightdata_settings_redirect():
     """Redirect old brightdata settings URL to the new web scraper page"""
     return redirect(url_for('web_scraper_bp.index'))
 
+@app.route('/reset')
+def reset():
+    """Reset the session and start fresh"""
+    # Clear the session
+    session.clear()
+
+    # Initialize a new session
+    initialize_session()
+
+    flash('Session reset successfully. All previous analysis has been cleared.', 'success')
+    return redirect(url_for('home'))
+
 @app.route('/api/sync', methods=['POST'])
 def api_sync():
     initialize_session()
