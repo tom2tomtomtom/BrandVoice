@@ -28,11 +28,11 @@ def extract_text_from_txt(txt_path):
 def index():
     if request.method == 'POST':
         # Check if the post request has the file part
-        if 'documents' not in request.files:
+        if 'document' not in request.files:
             flash('No file part', 'danger')
             return redirect(request.url)
 
-        files = request.files.getlist('documents')
+        files = [request.files['document']]
 
         # If user does not select file, browser also
         # submit an empty part without filename
@@ -97,7 +97,7 @@ def index():
         else:
             flash('Could not extract text from the uploaded files.', 'danger')
 
-    return render_template('document_upload/index.html')
+    return render_template('document_upload.html')
 
 @document_upload_bp.route('/document-upload/results')
 def results():
@@ -109,8 +109,5 @@ def results():
         flash('Please upload and analyze documents first.', 'warning')
         return redirect(url_for('document_upload.index'))
 
-    # Get analysis results
-    analysis_results = input_methods['document_upload']['data']
-
-    return render_template('document_upload/results.html',
-                          analysis_results=analysis_results)
+    # Redirect to the main results page
+    return redirect(url_for('results'))

@@ -60,8 +60,18 @@
                         </div>
                     </div>
 
+                    <!-- Analysis Progress Bar (hidden by default) -->
+                    <div id="analysis-progress-container" class="mb-4 d-none">
+                        <h5><i class="fas fa-spinner fa-spin me-2"></i> Analyzing Document</h5>
+                        <div class="progress" style="height: 25px;">
+                            <div id="analysis-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"
+                                 role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        </div>
+                        <p id="analysis-status" class="mt-2 text-muted">Preparing document for analysis...</p>
+                    </div>
+
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" id="analyze-btn" class="btn btn-primary">
                             <i class="fas fa-cogs"></i> Analyze Document
                         </button>
                     </div>
@@ -134,6 +144,11 @@
         const filePreview = document.getElementById('file-preview');
         const fileName = document.getElementById('file-name');
         const fileSize = document.getElementById('file-size');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const form = document.querySelector('form');
+        const progressContainer = document.getElementById('analysis-progress-container');
+        const progressBar = document.getElementById('analysis-progress-bar');
+        const progressStatus = document.getElementById('analysis-status');
 
         fileInput.addEventListener('change', function() {
             if (this.files.length > 0) {
@@ -157,6 +172,120 @@
                 filePreview.classList.add('d-none');
             }
         });
+
+        form.addEventListener('submit', function(e) {
+            // Only if we have a file selected
+            if (fileInput.files.length > 0) {
+                e.preventDefault();
+
+                // Show progress bar
+                progressContainer.classList.remove('d-none');
+                analyzeBtn.disabled = true;
+
+                // Create FormData object
+                const formData = new FormData(form);
+
+                // Create and configure XMLHttpRequest object
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', form.action, true);
+
+                // Set up progress tracking
+                xhr.upload.onprogress = function(e) {
+                    if (e.lengthComputable) {
+                        // This is the upload progress (document being sent to server)
+                        const percentComplete = Math.round((e.loaded / e.total) * 30); // Upload is 30% of the process
+                        updateProgress(percentComplete, 'Uploading document...');
+                    }
+                };
+
+                // Track analysis progress
+                let progressInterval;
+                let currentProgress = 30;
+
+                xhr.onloadstart = function() {
+                    // Start the progress simulation for analysis (from 30% to 90%)
+                    progressInterval = setInterval(function() {
+                        if (currentProgress < 90) {
+                            currentProgress += 1;
+
+                            // Update status message based on progress
+                            let statusMessage = 'Analyzing document...';
+                            if (currentProgress > 40 && currentProgress <= 60) {
+                                statusMessage = 'Extracting key phrases...';
+                            } else if (currentProgress > 60 && currentProgress <= 75) {
+                                statusMessage = 'Identifying tone and personality...';
+                            } else if (currentProgress > 75) {
+                                statusMessage = 'Generating brand voice parameters...';
+                            }
+
+                            updateProgress(currentProgress, statusMessage);
+                        }
+                    }, 300); // Update every 300ms
+                };
+
+                xhr.onload = function() {
+                    clearInterval(progressInterval);
+
+                    if (xhr.status === 200) {
+                        // Check if the response is a redirect
+                        const contentType = xhr.getResponseHeader('Content-Type');
+                        if (contentType && contentType.includes('text/html')) {
+                            // Complete the progress bar
+                            updateProgress(100, 'Analysis complete!');
+
+                            // Redirect after a short delay to show 100%
+                            setTimeout(function() {
+                                // Extract the redirect URL from the response if possible
+                                // For simplicity, we'll just redirect to the results page
+                                window.location.href = "{{ url_for('document_upload.results') }}";
+                            }, 500);
+                        } else {
+                            // Handle JSON response or other formats if needed
+                            console.log('Received response:', xhr.responseText);
+                            window.location.reload();
+                        }
+                    } else {
+                        // Handle error
+                        updateProgress(0, 'Error: ' + xhr.statusText);
+                        analyzeBtn.disabled = false;
+                        setTimeout(function() {
+                            progressContainer.classList.add('d-none');
+                        }, 3000);
+                    }
+                };
+
+                xhr.onerror = function() {
+                    clearInterval(progressInterval);
+                    updateProgress(0, 'Network error occurred');
+                    analyzeBtn.disabled = false;
+                    setTimeout(function() {
+                        progressContainer.classList.add('d-none');
+                    }, 3000);
+                };
+
+                // Send the form data
+                xhr.send(formData);
+            }
+        });
+
+        function updateProgress(percent, statusText) {
+            progressBar.style.width = percent + '%';
+            progressBar.setAttribute('aria-valuenow', percent);
+            progressBar.textContent = percent + '%';
+
+            if (statusText) {
+                progressStatus.textContent = statusText;
+            }
+
+            // Change color based on progress
+            if (percent < 30) {
+                progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated bg-info';
+            } else if (percent < 70) {
+                progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated bg-primary';
+            } else {
+                progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated bg-success';
+            }
+        }
 
         function formatFileSize(bytes) {
             if (bytes === 0) return '0 Bytes';
