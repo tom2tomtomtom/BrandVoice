@@ -4,11 +4,15 @@ import re
 import ssl
 import urllib3
 import requests
+import json
+import urllib.request
+from urllib.parse import urlparse
 from requests.adapters import HTTPAdapter
 from urllib3.util.ssl_ import create_urllib3_context
+from urllib3.poolmanager import PoolManager
 from app.utils.session_manager import get_brand_parameters, update_input_method, get_input_methods
 from app.utils.text_analyzer import update_brand_parameters as update_params_from_analysis
-from app.utils.web_unlocker import fetch_with_web_unlocker
+from app.utils.web_unlocker import fetch_with_web_unlocker, web_unlocker
 
 web_scraper_bp = Blueprint('web_scraper_bp', __name__)
 
@@ -92,8 +96,6 @@ def scrape_website(url):
                             try:
                                 print("Trying with a completely different approach for expired certificates...")
                                 # Try with a different library - requests with a custom adapter
-                                import ssl
-                                from urllib3.poolmanager import PoolManager
 
                                 # Create a custom adapter that accepts all certificates
                                 class TLSAdapter(requests.adapters.HTTPAdapter):
@@ -166,7 +168,7 @@ def scrape_website(url):
                         print("Trying with a completely different approach...")
                         try:
                             # Try with a different library if available
-                            import urllib.request
+                            # Create an unverified context
                             context = ssl._create_unverified_context()
                             req = urllib.request.Request(url, headers=headers)
                             with urllib.request.urlopen(req, context=context, timeout=20) as response_obj:
@@ -301,7 +303,7 @@ def get_internal_links(url):
                 # Try with a more aggressive approach to bypass SSL
                 try:
                     print("Trying with urllib and completely unverified SSL context")
-                    import urllib.request
+                    # Create an unverified context
                     context = ssl._create_unverified_context()
                     req = urllib.request.Request(url, headers=headers)
                     with urllib.request.urlopen(req, context=context, timeout=20) as response_obj:
@@ -334,8 +336,6 @@ def get_internal_links(url):
                             try:
                                 print("Trying with a completely different approach for expired certificates...")
                                 # Try with a different library - requests with a custom adapter
-                                import ssl
-                                from urllib3.poolmanager import PoolManager
 
                                 # Create a custom adapter that accepts all certificates
                                 class TLSAdapter(requests.adapters.HTTPAdapter):
@@ -410,7 +410,6 @@ def get_internal_links(url):
         soup = BeautifulSoup(response.text, 'html.parser')
 
         # Extract base URL more reliably
-        from urllib.parse import urlparse
         parsed_url = urlparse(url)
         base_url = parsed_url.netloc
 
@@ -510,7 +509,7 @@ def index():
         if not website_url:
             print("URL is empty after stripping whitespace")
             flash('Please enter a website URL', 'danger')
-            return redirect(url_for('web_scraper.index'))
+            return redirect(url_for('web_scraper_bp.index'))
 
         # Clean up and normalize the URL
         # Remove any whitespace and common prefixes that users might include
@@ -697,9 +696,6 @@ def results():
     if not input_methods['web_scraper']['used']:
         flash('Please analyze a website first.', 'warning')
         return redirect(url_for('web_scraper_bp.index'))
-
-    # Get analysis results
-    analysis_results = input_methods['web_scraper']['data']
 
     # For now, redirect to the main results page
     return redirect(url_for('results'))
