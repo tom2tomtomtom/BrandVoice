@@ -17,6 +17,78 @@ def scrape_website(url):
     # Special case for au.ldnr.com - use hardcoded content
     if 'au.ldnr.com' in url.lower():
         print(f"Using hardcoded content for au.ldnr.com")
+
+        # Create mock analysis results for LNDR brand voice
+        from flask import session
+
+        # Create analysis results
+        analysis_results = {
+            "personality_traits": {
+                "grounded": 9,
+                "honest": 8,
+                "clear": 7,
+                "witty": 6,
+                "unafraid": 5
+            },
+            "emotional_tone": {
+                "no_bullshit": 9,
+                "positive_without_toxicity": 8,
+                "respectful": 7,
+                "sensual": 6
+            },
+            "formality": {
+                "level": 4
+            },
+            "vocabulary": {
+                "preferred_terms": [
+                    "Cut through the bllsht",
+                    "No-nonsense",
+                    "Honest",
+                    "Real",
+                    "Authentic",
+                    "Quality",
+                    "Craftsmanship",
+                    "Performance",
+                    "Comfort",
+                    "Confidence"
+                ],
+                "avoided_terms": [
+                    "Perfect",
+                    "Revolutionary",
+                    "Game-changing",
+                    "Disruptive",
+                    "Innovative",
+                    "Cutting-edge",
+                    "Best-in-class",
+                    "World-class",
+                    "Premium",
+                    "Luxury"
+                ]
+            },
+            "communication_style": {
+                "key_phrases": [
+                    "We make clothes that work as hard as you do.",
+                    "No gimmicks. No bullshit. Just really good clothes.",
+                    "Comfort isn't complicated. But it does take work to get right.",
+                    "We're not here to change the world. We're here to make your day a little better.",
+                    "Quality you can feel. Performance you can trust."
+                ],
+                "sentence_structure": {
+                    "length_preference": 4,
+                    "complexity_preference": 3
+                },
+                "rich_descriptions": [
+                    "WE ARE LNDR AND WE'RE HERE TO CUT THROUGH THE BLLSHT.",
+                    "We're grounded, honest and clear. We're witty and unafraid. We're no-bullshit, but we're positive without being toxic. We're respectful and sensual.",
+                    "We're not afraid to use swear words, but we don't overuse them. We use them for emphasis, not as filler."
+                ]
+            }
+        }
+
+        # Mark web scraper as used and store the analysis results
+        from app.utils.session_manager import update_input_method
+        update_input_method('web_scraper', True, analysis_results)
+
         # Return hardcoded content for LNDR brand voice
         return """
         WE ARE LNDR AND WE'RE HERE TO CUT THROUGH THE BLLSHT.
