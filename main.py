@@ -585,6 +585,11 @@ def results():
     print(f"Communication style - length: {session['brand_parameters']['communication_style']['sentence_structure']['length_preference']}")
     print(f"Communication style - complexity: {session['brand_parameters']['communication_style']['sentence_structure']['complexity_preference']}")
 
+    # Debug input methods
+    print("\nInput methods status:")
+    for method_name, method_data in session['input_methods'].items():
+        print(f"{method_name}: used={method_data.get('used', False)}, timestamp={method_data.get('timestamp', 'None')}")
+
     # Generate brand voice summary
     from app.utils.text_analyzer import generate_brand_voice_summary
 

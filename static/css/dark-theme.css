@@ -460,9 +460,9 @@ textarea.form-control {
 }
 
 .alert-success {
-    background-color: rgba(196, 196, 196, 0.1);
-    color: var(--text-secondary);
-    border-left: 4px solid var(--text-secondary);
+    background-color: rgba(54, 211, 153, 0.1);
+    color: var(--success-color);
+    border-left: 4px solid var(--success-color);
 }
 
 .alert-danger {
