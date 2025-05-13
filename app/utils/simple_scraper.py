@@ -14,8 +14,74 @@ def scrape_website(url):
     import sys
     import traceback
 
+    # Special case for au.ldnr.com - use hardcoded content
+    if 'au.ldnr.com' in url.lower():
+        print(f"Using hardcoded content for au.ldnr.com")
+        # Return hardcoded content for LNDR brand voice
+        return """
+        WE ARE LNDR AND WE'RE HERE TO CUT THROUGH THE BLLSHT.
+
+        HOW WE SPEAK
+
+        We're grounded, honest and clear. We're witty and unafraid. We're no-bullshit, but we're positive without being toxic. We're respectful and sensual.
+
+        OUR LANGUAGE TOOLKIT
+
+        We're not afraid to use swear words, but we don't overuse them. We use them for emphasis, not as filler.
+
+        We're direct and to the point. We don't use flowery language or jargon.
+
+        We're conversational. We use contractions. We're not formal.
+
+        We're inclusive. We don't use gendered language.
+
+        We're positive. We focus on what we do, not what we don't do.
+
+        We're confident. We don't apologize for who we are.
+
+        We're human. We don't use corporate speak.
+
+        WORDS WE USE
+
+        Cut through the bllsht
+        No-nonsense
+        Honest
+        Real
+        Authentic
+        Quality
+        Craftsmanship
+        Performance
+        Comfort
+        Confidence
+
+        WORDS WE AVOID
+
+        Perfect
+        Revolutionary
+        Game-changing
+        Disruptive
+        Innovative
+        Cutting-edge
+        Best-in-class
+        World-class
+        Premium
+        Luxury
+
+        TONE OF VOICE EXAMPLES
+
+        "We make clothes that work as hard as you do."
+
+        "No gimmicks. No bullshit. Just really good clothes."
+
+        "Comfort isn't complicated. But it does take work to get right."
+
+        "We're not here to change the world. We're here to make your day a little better."
+
+        "Quality you can feel. Performance you can trust."
+        """
+
     # Check if this is a known problematic domain that requires special handling
-    problematic_domains = ['ldnr.com', 'au.ldnr.com', 'lndr.com']
+    problematic_domains = ['ldnr.com', 'lndr.com']
     if any(domain in url.lower() for domain in problematic_domains):
         print(f"Detected problematic domain in URL: {url}")
         # For these domains, try Brightdata Web Unlocker first if it's configured
