@@ -57,6 +57,9 @@
                                         <span class="text-primary">Document Upload</span>
                                         {% if input_methods.document_upload.used %}
                                             <span class="badge bg-success ms-2">Completed</span>
+                                            {% if input_methods.document_upload.timestamp %}
+                                                <small class="text-muted ms-2">{{ input_methods.document_upload.timestamp }}</small>
+                                            {% endif %}
                                         {% else %}
                                             <a href="{{ url_for('document_upload') }}" class="badge bg-secondary ms-2">Add</a>
                                         {% endif %}

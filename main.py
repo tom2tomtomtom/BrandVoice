@@ -434,7 +434,16 @@ def document_upload():
                         # Mark document upload as used
                         session['input_methods']['document_upload']['used'] = True
                         session['input_methods']['document_upload']['data'] = analysis_results
+
+                        # Update the timestamp
+                        session['input_methods']['document_upload']['timestamp'] = datetime.now().isoformat()
+
+                        # Make sure the session is saved
                         session.modified = True
+
+                        # Print confirmation for debugging
+                        print("Document upload marked as used:", session['input_methods']['document_upload']['used'])
+                        print("Document upload timestamp:", session['input_methods']['document_upload']['timestamp'])
 
                         flash('Document analyzed successfully!', 'success')
                         return redirect(url_for('results'))
