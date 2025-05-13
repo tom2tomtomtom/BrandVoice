@@ -5,6 +5,7 @@ import PyPDF2
 import requests
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, make_response
+from flask_session import Session
 from flask_wtf.csrf import CSRFProtect
 from bs4 import BeautifulSoup
 from werkzeug.utils import secure_filename
@@ -27,6 +28,14 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-key-for-brand-voice-codifier')
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # Session lifetime in seconds (1 hour)
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
+# Initialize Flask-Session
+Session(app)
 
 # Register blueprints
 from app.routes.web_scraper import web_scraper_bp
@@ -73,6 +82,8 @@ EMOTIONAL_TONES = {
 # Helper functions
 def initialize_session():
     """Initialize session variables if they don't exist"""
+    # Make session permanent
+    session.permanent = True
     if 'brand_parameters' not in session:
         session['brand_parameters'] = {
             "personality": {
