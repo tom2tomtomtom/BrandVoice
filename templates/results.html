@@ -56,10 +56,12 @@
                                         <i class="fas {% if input_methods.document_upload.used %}fa-check-circle{% else %}fa-times-circle text-muted{% endif %} me-2"></i>
                                         <span class="text-primary">Document Upload</span>
                                         {% if input_methods.document_upload.used %}
-                                            <span class="badge bg-success ms-2">Completed</span>
-                                            {% if input_methods.document_upload.timestamp %}
-                                                <small class="text-muted ms-2">{{ input_methods.document_upload.timestamp }}</small>
-                                            {% endif %}
+                                            <div>
+                                                <span class="badge bg-success ms-2">Doc Analysis Complete</span>
+                                                {% if input_methods.document_upload.timestamp %}
+                                                    <small class="text-muted d-block mt-1">{{ input_methods.document_upload.timestamp }}</small>
+                                                {% endif %}
+                                            </div>
                                         {% else %}
                                             <a href="{{ url_for('document_upload') }}" class="badge bg-secondary ms-2">Add</a>
                                         {% endif %}
@@ -68,7 +70,12 @@
                                         <i class="fas {% if input_methods.brand_interview.used %}fa-check-circle{% else %}fa-times-circle text-muted{% endif %} me-2"></i>
                                         <span class="text-primary">Brand Interview</span>
                                         {% if input_methods.brand_interview.used %}
-                                            <span class="badge bg-success ms-2">Completed</span>
+                                            <div>
+                                                <span class="badge bg-success ms-2">Interview Complete</span>
+                                                {% if input_methods.brand_interview.timestamp %}
+                                                    <small class="text-muted d-block mt-1">{{ input_methods.brand_interview.timestamp }}</small>
+                                                {% endif %}
+                                            </div>
                                         {% else %}
                                             <a href="{{ url_for('brand_interview') }}" class="badge bg-secondary ms-2">Add</a>
                                         {% endif %}
@@ -77,7 +84,12 @@
                                         <i class="fas {% if input_methods.web_scraper.used %}fa-check-circle{% else %}fa-times-circle text-muted{% endif %} me-2"></i>
                                         <span class="text-primary">Web Scraper</span>
                                         {% if input_methods.web_scraper.used %}
-                                            <span class="badge bg-success ms-2">Completed</span>
+                                            <div>
+                                                <span class="badge bg-success ms-2">Web Analysis Complete</span>
+                                                {% if input_methods.web_scraper.timestamp %}
+                                                    <small class="text-muted d-block mt-1">{{ input_methods.web_scraper.timestamp }}</small>
+                                                {% endif %}
+                                            </div>
                                         {% else %}
                                             <a href="{{ url_for('web_scraper_bp.index') }}" class="badge bg-secondary ms-2">Add</a>
                                         {% endif %}
