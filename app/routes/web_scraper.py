@@ -8,6 +8,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.ssl_ import create_urllib3_context
 from app.utils.session_manager import get_brand_parameters, update_input_method, get_input_methods
 from app.utils.text_analyzer import update_brand_parameters as update_params_from_analysis
+from app.utils.web_unlocker import fetch_with_web_unlocker
 
 web_scraper_bp = Blueprint('web_scraper', __name__)
 
@@ -120,7 +121,32 @@ def scrape_website(url):
                                 print("Last resort approach successful")
                             except Exception as last_e:
                                 print(f"Last resort approach failed: {str(last_e)}")
-                                raise
+
+                                # Final fallback: Try with Brightdata Web Unlocker API if configured
+                                from app.utils.web_unlocker import web_unlocker
+                                if web_unlocker.is_configured():
+                                    print("Trying with Brightdata Web Unlocker API...")
+                                    try:
+                                        success, content = fetch_with_web_unlocker(url)
+                                        if success:
+                                            print("Brightdata Web Unlocker API successful")
+                                            # Create a mock response object with the text
+                                            class MockResponse:
+                                                def __init__(self, text):
+                                                    self.text = text
+                                                    self.status_code = 200
+
+                                            response = MockResponse(content)
+                                            print("Web Unlocker approach successful")
+                                        else:
+                                            print(f"Web Unlocker approach failed: {content}")
+                                            raise Exception(f"All approaches failed: {content}")
+                                    except Exception as unlocker_e:
+                                        print(f"Web Unlocker approach failed: {str(unlocker_e)}")
+                                        raise
+                                else:
+                                    print("Brightdata Web Unlocker API is not configured or disabled. Skipping this approach.")
+                                    raise Exception("All approaches failed and Web Unlocker API is not configured")
                     else:
                         raise
             else:
@@ -337,7 +363,32 @@ def get_internal_links(url):
                                 print("Last resort approach successful")
                             except Exception as last_e:
                                 print(f"Last resort approach failed: {str(last_e)}")
-                                raise
+
+                                # Final fallback: Try with Brightdata Web Unlocker API if configured
+                                from app.utils.web_unlocker import web_unlocker
+                                if web_unlocker.is_configured():
+                                    print("Trying with Brightdata Web Unlocker API...")
+                                    try:
+                                        success, content = fetch_with_web_unlocker(url)
+                                        if success:
+                                            print("Brightdata Web Unlocker API successful")
+                                            # Create a mock response object with the text
+                                            class MockResponse:
+                                                def __init__(self, text):
+                                                    self.text = text
+                                                    self.status_code = 200
+
+                                            response = MockResponse(content)
+                                            print("Web Unlocker approach successful")
+                                        else:
+                                            print(f"Web Unlocker approach failed: {content}")
+                                            raise Exception(f"All approaches failed: {content}")
+                                    except Exception as unlocker_e:
+                                        print(f"Web Unlocker approach failed: {str(unlocker_e)}")
+                                        raise
+                                else:
+                                    print("Brightdata Web Unlocker API is not configured or disabled. Skipping this approach.")
+                                    raise Exception("All approaches failed and Web Unlocker API is not configured")
                     else:
                         raise
             else:

@@ -124,6 +124,13 @@ def initialize_session():
             "last_sync_time": None
         }
 
+    if 'brightdata_settings' not in session:
+        session['brightdata_settings'] = {
+            "api_key": "",
+            "zone": "web_unlocker1",
+            "enabled": False
+        }
+
 def analyze_text(text):
     """Analyze text to extract brand voice parameters"""
     # Tokenize text
@@ -814,6 +821,59 @@ def api_settings():
         return redirect(url_for('api_settings'))
 
     return render_template('api_settings.html', api_settings=session['api_settings'])
+
+@app.route('/brightdata_settings', methods=['GET', 'POST'])
+def brightdata_settings():
+    initialize_session()
+
+    # Initialize brightdata settings if not present
+    if 'brightdata_settings' not in session:
+        session['brightdata_settings'] = {
+            'api_key': '',
+            'zone': 'web_unlocker1',
+            'enabled': False
+        }
+        session.modified = True
+
+    if request.method == 'POST':
+        # Get settings from form
+        api_key = request.form.get('api_key', '')
+        zone = request.form.get('zone', 'web_unlocker1')
+        enabled = 'enabled' in request.form
+
+        # Update session
+        session['brightdata_settings']['api_key'] = api_key
+        session['brightdata_settings']['zone'] = zone
+        session['brightdata_settings']['enabled'] = enabled
+        session.modified = True
+
+        # Log the settings (mask the API key)
+        print(f"Brightdata settings saved: API Key: {'*' * len(api_key) if api_key else 'None'}, Zone: {zone}, Enabled: {enabled}")
+
+        # Update the web_unlocker instance with the new API key
+        if api_key:
+            try:
+                from app.utils.web_unlocker import web_unlocker
+                web_unlocker.api_key = api_key
+                web_unlocker.zone = zone
+
+                # Test the connection if enabled
+                if enabled:
+                    success, content = web_unlocker.fetch_url('https://example.com')
+                    if success:
+                        flash('Brightdata Web Unlocker API key saved and verified successfully!', 'success')
+                    else:
+                        flash(f'Brightdata API key saved but verification failed: {content}', 'warning')
+                else:
+                    flash('Brightdata settings saved. Web Unlocker API is disabled.', 'info')
+            except Exception as e:
+                flash(f'Error configuring Brightdata Web Unlocker: {str(e)}', 'danger')
+        else:
+            flash('Brightdata settings cleared.', 'info')
+
+        return redirect(url_for('brightdata_settings'))
+
+    return render_template('brightdata_settings.html', brightdata_settings=session.get('brightdata_settings', {}))
 
 @app.route('/api/sync', methods=['POST'])
 def api_sync():
