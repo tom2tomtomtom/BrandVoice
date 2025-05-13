@@ -686,7 +686,7 @@ def index():
 
         return redirect(url_for('web_scraper_bp.index'))
 
-    return render_template('web_scraper/index.html', brightdata_settings=brightdata_settings)
+    return render_template('web_scraper.html', brightdata_settings=brightdata_settings)
 
 @web_scraper_bp.route('/web-scraper/results')
 def results():
@@ -701,5 +701,5 @@ def results():
     # Get analysis results
     analysis_results = input_methods['web_scraper']['data']
 
-    return render_template('web_scraper/results.html',
-                          analysis_results=analysis_results)
+    # For now, redirect to the main results page
+    return redirect(url_for('results'))
