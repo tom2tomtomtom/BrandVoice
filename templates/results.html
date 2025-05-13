@@ -76,7 +76,7 @@
                                         {% if input_methods.web_scraper.used %}
                                             <span class="badge bg-success ms-2">Completed</span>
                                         {% else %}
-                                            <a href="{{ url_for('web_scraper') }}" class="badge bg-secondary ms-2">Add</a>
+                                            <a href="{{ url_for('web_scraper_bp.index') }}" class="badge bg-secondary ms-2">Add</a>
                                         {% endif %}
                                     </li>
                                 </ul>
